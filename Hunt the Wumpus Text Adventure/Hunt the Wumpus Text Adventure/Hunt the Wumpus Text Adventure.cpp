@@ -1,6 +1,7 @@
 // Hunt the Wumpus Text Adventure.cpp : This file contains the 'main' function. Program execution begins and ends there.
 
 #include "Room.hpp"
+#include <limits>
 
 room playerPlace;
 
@@ -53,20 +54,30 @@ void RoomSelection(room& currentRoom)
 {
 	int whichRoom = -1;
 
-	cout << "Je zit in kamer " << playerPlace.roomID << endl;
-	cout << "De gangen lijden naar " << currentRoom.adjacentRooms[0]
-		<< " " << currentRoom.adjacentRooms[1] << " " << currentRoom.adjacentRooms[2] << endl;
-
-	cout << "Naar welke gang?" << endl;
-
 	while (true)
 	{
+		cout << "Je zit in kamer " << playerPlace.roomID << endl;
+		cout << "De gangen lijden naar " << currentRoom.adjacentRooms[0]
+			<< " " << currentRoom.adjacentRooms[1] << " " << currentRoom.adjacentRooms[2] << endl;
+
+		cout << "Naar welke gang?" << endl;
+
 		cin >> whichRoom;
 
-		if (whichRoom == currentRoom.adjacentRooms[0] || whichRoom == currentRoom.adjacentRooms[1] || whichRoom == currentRoom.adjacentRooms[2])
+		if (cin.fail())
+		{
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			cout << "Input is ongeldig. Moet een nummer zijn. Probeer het nog een keer" << endl << endl;
+			continue;
+		}
+
+		if (!(whichRoom >= currentRoom.adjacentRooms.size()) && (whichRoom == currentRoom.adjacentRooms[0] || whichRoom == currentRoom.adjacentRooms[1] || whichRoom == currentRoom.adjacentRooms[2]))
 		{
 			break;
 		}
+		
+		cout << "Input is ongeldig. Probeer het nog een keer" << endl << endl;
 	}
 
 	playerPlace = rooms[whichRoom - 1];
