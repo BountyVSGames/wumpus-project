@@ -1,20 +1,86 @@
 // Hunt the Wumpus Text Adventure.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
 
-#include <iostream>
+#include "Room.hpp"
+
+room playerPlace;
+
+room room1{ 1, { 8, 2, 3 } };
+room room2{ 2, { 1, 3, 4 } };
+room room3{ 3, { 1, 2, 4 } };
+room room4{ 4, { 2, 3, 5 } };
+room room5{ 5, { 4, 6, 7 } };
+room room6{ 6, { 5, 7, 8 } };
+room room7{ 7, { 5, 6, 8 } };
+room room8{ 8, { 1, 6, 7 } };
+
+vector<room> rooms = { room1, room2 , room3 ,room4, room5, room6, room7, room8 };
+
+void Intro(room & startRoom) 
+{
+	cout << "Welkom bij 'Hunt the Wumpus'! " << endl << endl;
+
+	cout << "De Wumpus leeft in een grot met 20 kamers. Elke kamer heeft 3 tunnels die leiden naar andere kamers. " << endl << endl;
+
+	cout << "Gevaren: " << endl;
+	cout << "De bodemloze put: twee kamers hebben een bodemloze put. " << endl;
+	cout << "Als je in deze kamer komt val je in deze put (en verlies je meteen). " << endl << endl;
+
+	cout << "Super vleermuizen: twee kamers hebben super vleermuizen. " << endl;
+	cout << "Als je de super vleermuizen tegen komt in een kamer word je naar een random kamer gebracht door de super vleermuizen." << endl;
+	cout << "Nadat jij naar een andere kamer bent gezet, veranderen de super vleermuizen ook van kamer!" << endl << endl;
+
+	cout << "De Wumpus" << endl;
+	cout << "De wumpus is immuun voor de gevaren in de kamers. " << endl;
+	cout << "Over het algemeen slaapt de Wumpus, maar de Wumus is ook wel eens wakker!" << endl;
+	cout << "De wumpus wordt wakker als je een pijl schiet OF als jj zijn kamer binnen komt." << endl;
+	cout << "Als de Wumpus wakker is verplaatst hij zich naar een andere kamer." << endl;
+	cout << "Als dit dezelfde kamer is als waar jij in staat (of als jij zijn kamer binnekomt) eet hij je op en verlies je." << endl << endl;
+
+	cout << "De speler" << endl;
+	cout << "Elke zet mag je lopen OF schieten" << endl;
+	cout << "Lopen: ja kan naar een van de drie aangegeven kamers verplaatsen." << endl;
+	cout << "Schieten: ja kan kiezen hoeveel pijlen je schiet (1t/m5)." << endl;
+	cout << "Je moet voor elke losse pijl aangeven naar welke kamer je hem wil schieten " << endl;
+	cout << "Als de gekozen kamer niks oplevert (als de Wumpus daar niet zit), kaatst de pijl naar 2 random kamers. " << endl;
+	cout << "De pijl kan ook op je eigen kamer komen. Dan ben je af. " << endl << endl;
+
+	cout << "De game is afgelopen als je de Wumpus weet te raken met je pijlen. Veel succes!" << endl << endl;
+
+	RoomSelection(startRoom);
+}
+
+void RoomSelection(room& currentRoom) 
+{
+	int whichRoom = -1;
+
+	cout << "Je zit in kamer " << playerPlace.roomID << endl;
+	cout << "De gangen lijden naar " << currentRoom.adjacentRooms[0]
+		<< " " << currentRoom.adjacentRooms[1] << " " << currentRoom.adjacentRooms[2] << endl;
+
+	cout << "Naar welke gang?" << endl;
+
+	while (true)
+	{
+		cin >> whichRoom;
+
+		if (whichRoom == currentRoom.adjacentRooms[0] || whichRoom == currentRoom.adjacentRooms[1] || whichRoom == currentRoom.adjacentRooms[2])
+		{
+			break;
+		}
+	}
+
+	playerPlace = rooms[whichRoom - 1];
+
+	EnterRoom(playerPlace);
+}
+void EnterRoom(room & room) 
+{
+	RoomSelection(room);
+}
 
 int main()
 {
-    std::cout << "Hello World!\n";
+	playerPlace = rooms[1];
+
+	Intro(playerPlace);
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
