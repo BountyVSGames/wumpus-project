@@ -4,8 +4,12 @@
 #include <vector>
 #include <iostream>
 #include <limits>
+#include <fstream>
+#include "rapidjson-master/include/rapidjson/istreamwrapper.h"
+#include "rapidjson-master/include/rapidjson/document.h"
 
 using namespace std;
+using namespace rapidjson;
 
 struct room
 {
@@ -23,5 +27,6 @@ void RoomSelection(room& currentRoom);
 void BatRoom();
 void WumpusRoom();
 void PitRoom();
+void FillRoomvector();
 
 #endif // ROOM_HPP

@@ -1,0 +1,14 @@
+[
+  {
+    "roomID": 1,
+    "adjacentRooms": [ 8, 2, 3 ],
+    "bat": false,
+    "pit": false
+  },
+  {
+    "roomID": 2,
+    "adjacentRooms": [ 1, 3, 4 ],
+    "bat": false,
+    "pit": false
+  }
+]
