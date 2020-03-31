@@ -1,4 +1,5 @@
 #include "Room.hpp"
+#include "rapidjson-master/include/rapidjson/reader.h"
 
 room playerPlace;
 
