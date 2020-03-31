@@ -81,6 +81,7 @@ void RoomSelection(room& currentRoom)
 
 	EnterRoom(playerPlace);
 }
+
 void EnterRoom(room & room) 
 {
 	RoomSelection(room);
