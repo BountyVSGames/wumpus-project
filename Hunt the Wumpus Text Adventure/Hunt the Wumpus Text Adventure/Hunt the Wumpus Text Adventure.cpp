@@ -16,12 +16,13 @@ void FillRoomVector(vector<room>& roomVec) {
 			//maak vector aan met values van json file
 			adjacentRoomsConf.push_back(y.GetInt());
 		}
-		roomVec.push_back({
-			configFile[x]["roomID"].GetInt(),
-			adjacentRoomsConf,
-			configFile[x]["bat"].GetBool(),
-			configFile[x]["pit"].GetBool()
-			});		//maak nieuwe room object met json values en zet die in de vector
+		roomVec.push_back({						//maak nieuwe room object met json values en zet die in de vector
+			configFile[x]["roomID"].GetInt(),	//roomID
+			adjacentRoomsConf,					//adjacentRooms
+			configFile[x]["bat"].GetBool(),		//bat
+			configFile[x]["pit"].GetBool(),		//pit
+			configFile[x]["wumpus"].GetBool()	//wumpus
+			});
 		adjacentRoomsConf = {};
 	}
 }

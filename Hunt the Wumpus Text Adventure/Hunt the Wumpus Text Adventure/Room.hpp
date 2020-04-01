@@ -17,6 +17,7 @@ struct room
 	vector<int> adjacentRooms;
 	bool bat = false;
 	bool pit = false;
+	bool wumpus = false;
 };
 
 void Intro(room& startRoom);
