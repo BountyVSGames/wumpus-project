@@ -3,7 +3,8 @@
 room playerPlace;
 vector<room> rooms = {};
 
-void FillRoomVector(vector<room>& roomVec) {
+void FillRoomVector(vector<room>& roomVec)
+{
 	ifstream file("config.json");		//stream
 	IStreamWrapper wrapper(file);		//wrapper
 
@@ -75,11 +76,13 @@ void RoomSelection(room& currentRoom)
 
 		cin >> whichRoom;
 
+		cout << endl;
+
 		if (cin.fail())
 		{
 			cin.clear();
 			cin.ignore(numeric_limits<streamsize>::max(), '\n');
-			cout << "Input is ongeldig. Moet een nummer zijn. Probeer het nog een keer" << endl << endl;
+			cout << "Input Moet een nummer zijn. Probeer het nog een keer" << endl << endl;
 			continue;
 		}
 
@@ -96,8 +99,23 @@ void RoomSelection(room& currentRoom)
 	EnterRoom(playerPlace);
 }
 
+void RandomBatRoom(room& playerPlace)
+{
+	cout << "Je bent in een kamer gekomen met vleermuizen!\n";
+	cout << "De vleermuizen brengen je naar een nieuwe kamer.\n\n";
+	srand((unsigned)time(NULL));
+	int randomRoom = rand() % 8;
+	while(randomRoom == (playerPlace.roomID - 1)) {
+		randomRoom = rand() % 8;
+	}
+	playerPlace = rooms[randomRoom];
+}
+
 void EnterRoom(room & room) 
 {
+	if (playerPlace.bat) {
+		RandomBatRoom(room);
+	}
 	RoomSelection(room);
 }
 

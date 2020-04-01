@@ -12,5 +12,47 @@
     "bat": false,
     "pit": false,
     "wumpus": false
+  },
+  {
+    "roomID": 3,
+    "adjacentRooms": [ 1, 2, 4 ],
+    "bat": false,
+    "pit": false,
+    "wumpus": false
+  },
+  {
+    "roomID": 4,
+    "adjacentRooms": [ 2, 3, 5 ],
+    "bat": false,
+    "pit": false,
+    "wumpus": false
+  },
+  {
+    "roomID": 5,
+    "adjacentRooms": [ 4, 6, 7 ],
+    "bat": false,
+    "pit": false,
+    "wumpus": false
+  },
+  {
+    "roomID": 6,
+    "adjacentRooms": [ 5, 7, 8 ],
+    "bat": true,
+    "pit": false,
+    "wumpus": false
+  },
+  {
+    "roomID": 7,
+    "adjacentRooms": [ 5, 6, 8 ],
+    "bat": false,
+    "pit": false,
+    "wumpus": false
+  },
+  {
+    "roomID": 8,
+    "adjacentRooms": [ 1, 6, 7 ],
+    "bat": false,
+    "pit": false,
+    "wumpus": false
   }
 ]

@@ -7,6 +7,8 @@
 #include <fstream>
 #include "rapidjson-master/include/rapidjson/istreamwrapper.h"
 #include "rapidjson-master/include/rapidjson/document.h"
+#include <cstdlib>
+#include <time.h>
 
 using namespace std;
 using namespace rapidjson;
