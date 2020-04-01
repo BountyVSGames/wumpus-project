@@ -4,12 +4,12 @@
 room playerPlace;
 
 room room1{ 1, { 8, 2, 3 } };
-room room2{ 2, { 1, 3, 4 } };
+room room2{ 2, { 1, 3, 4 } , false, true};
 room room3{ 3, { 1, 2, 4 } };
 room room4{ 4, { 2, 3, 5 } };
 room room5{ 5, { 4, 6, 7 } };
 room room6{ 6, { 5, 7, 8 } };
-room room7{ 7, { 5, 6, 8 } };
+room room7{ 7, { 5, 6, 8 } , false, true};
 room room8{ 8, { 1, 6, 7 } };
 
 vector<room> rooms = { room1, room2 , room3 ,room4, room5, room6, room7, room8 };
@@ -51,7 +51,6 @@ void Intro(room & startRoom)
 void RoomSelection(room& currentRoom) 
 {
 	int whichRoom = -1;
-
 	while (true)
 	{
 		cout << "Je zit in kamer " << playerPlace.roomID << endl;
@@ -83,16 +82,62 @@ void RoomSelection(room& currentRoom)
 	EnterRoom(playerPlace);
 }
 
+void PitRoom(room& room) 
+{
+	if (playerPlace.roomID == room.roomID && room.pit == true) {
+		cout << "Je bent in een bodemloze put gevallen...probeer het nog een keer!" << endl;
+		cout << endl << "Druk op de [ENTER] om opnieuw te beginnen" << endl;
+		cin.ignore();
+		cin.get();
+		cout << "----------------------------------------------------------" << endl << endl;
+		playerPlace = rooms[0];
+		Intro(playerPlace);
+	}
+	//else {
+		//RoomSelection(room);
+	//}
+}
+
+int RandomRoom()
+{
+	srand((unsigned)time(0));
+	int randomRoom = rand() % 8 + 1;
+
+	for (unsigned int i = 0; i < 20; i++) {
+		if (rooms[randomRoom - 1].pit == true || rooms[randomRoom-1].roomID == 1) {
+			randomRoom = rand() % 8 + 1;
+		}
+		else {
+			return randomRoom;
+		}
+	}
+}
+
+void RandomBatRoom(room& playerPlace)
+{
+	srand((unsigned)time(0));
+	int randomRoom = rand() % 8;
+
+	for (unsigned int i = 0; i < 20; i++) {
+		if (playerPlace.roomID == randomRoom) {
+			randomRoom = rand() % 8;
+		}
+		else {
+			playerPlace = rooms[randomRoom];
+		}
+	}
+}
+
 void EnterRoom(room & room) 
 {
+	PitRoom(room);
 	RoomSelection(room);
 }
 
 int main()
 {
+	RandomRoom();
 	playerPlace = rooms[0];
-
 	Intro(playerPlace);
-
 	return 0;
 }

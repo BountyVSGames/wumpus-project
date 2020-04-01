@@ -4,6 +4,8 @@
 #include <vector>
 #include <iostream>
 #include <limits>
+#include <stdlib.h>
+#include <time.h>
 
 using namespace std;
 
@@ -21,7 +23,9 @@ void EnterRoom(room& room);
 void RoomSelection(room& currentRoom);
 
 void BatRoom();
+void RandomBatRoom(room& playerplace);
+int RandomRoom();
 void WumpusRoom();
-void PitRoom();
+void PitRoom(room& room);
 
 #endif // ROOM_HPP
