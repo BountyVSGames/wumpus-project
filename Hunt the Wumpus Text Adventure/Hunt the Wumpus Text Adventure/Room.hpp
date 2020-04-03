@@ -15,6 +15,7 @@ struct room
 	vector<int> adjacentRooms;
 	bool bat = false;
 	bool pit = false;
+	bool wumpus = false;
 };
 
 void Intro(room& startRoom);
@@ -25,7 +26,7 @@ void RoomSelection(room& currentRoom);
 void BatRoom();
 void RandomBatRoom(room& playerplace);
 int RandomRoom();
-void WumpusRoom();
+void WumpusRoom(room& playerplace);
 void PitRoom(room& room);
 
 #endif // ROOM_HPP

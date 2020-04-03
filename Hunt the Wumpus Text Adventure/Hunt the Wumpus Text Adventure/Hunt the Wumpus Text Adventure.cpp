@@ -10,7 +10,7 @@ room room4{ 4, { 2, 3, 5 } };
 room room5{ 5, { 4, 6, 7 } };
 room room6{ 6, { 5, 7, 8 } };
 room room7{ 7, { 5, 6, 8 } , false, true};
-room room8{ 8, { 1, 6, 7 } };
+room room8{ 8, { 1, 6, 7 } , false, false, true};
 
 vector<room> rooms = { room1, room2 , room3 ,room4, room5, room6, room7, room8 };
 
@@ -93,6 +93,7 @@ void PitRoom(room& room)
 		playerPlace = rooms[0];
 		Intro(playerPlace);
 	}
+	
 	//else {
 		//RoomSelection(room);
 	//}
@@ -113,7 +114,7 @@ int RandomRoom()
 	}
 }
 
-void RandomBatRoom(room& playerPlace)
+void RandomBatRoom(room& room)
 {
 	srand((unsigned)time(0));
 	int randomRoom = rand() % 8;
@@ -128,15 +129,41 @@ void RandomBatRoom(room& playerPlace)
 	}
 }
 
+void WumpusRoom(room& room) {
+	int wumpusroom = 0;
+	for (unsigned int i = 0; i < rooms.size(); i++) {
+		if (rooms[i].wumpus == true) {
+			wumpusroom = rooms[i].roomID;
+		}
+	}
+
+	if (((wumpusroom - playerPlace.roomID) <= 2 && ((wumpusroom - playerPlace.roomID) > 0)) || (((playerPlace.roomID - wumpusroom) <= 2) && (playerPlace.roomID - wumpusroom) > 0)) {
+		cout << "De Wumpus is in de buurt!" << endl;
+	}
+
+	if (playerPlace.roomID == wumpusroom) {
+		cout << "Je bent tegen de Wumpus aangelopen...hij is boos en heeft je de grond in geslagen" << endl;
+		cout << endl << "Druk op de [ENTER] om opnieuw te beginnen" << endl;
+		cin.ignore();
+		cin.get();
+		cout << "----------------------------------------------------------" << endl << endl;
+		playerPlace = rooms[0];
+		Intro(playerPlace);
+	}
+}
+
 void EnterRoom(room & room) 
 {
 	PitRoom(room);
+	WumpusRoom(room);
 	RoomSelection(room);
 }
 
+
+
 int main()
 {
-	RandomRoom();
+	//RandomRoom();
 	playerPlace = rooms[0];
 	Intro(playerPlace);
 	return 0;
