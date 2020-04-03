@@ -45,7 +45,7 @@
     "roomID": 7,
     "adjacentRooms": [ 5, 6, 8 ],
     "bat": false,
-    "pit": false,
+    "pit": true,
     "wumpus": false
   },
   {
@@ -53,6 +53,6 @@
     "adjacentRooms": [ 1, 6, 7 ],
     "bat": false,
     "pit": false,
-    "wumpus": false
+    "wumpus": true
   }
 ]

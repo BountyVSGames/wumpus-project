@@ -1,2 +1,3 @@
 ﻿  Hunt the Wumpus Text Adventure.cpp
+D:\Documents\Git\wumpus-project\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure.cpp(155): warning C4715: 'RandomRoom': not all control paths return a value
   Hunt the Wumpus Text Adventure.vcxproj -> D:\Documents\Git\wumpus-project\Hunt the Wumpus Text Adventure\Debug\Hunt the Wumpus Text Adventure.exe

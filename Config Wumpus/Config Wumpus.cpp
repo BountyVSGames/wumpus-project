@@ -6,7 +6,7 @@
 using namespace rapidjson;
 
 vector<Room> rooms;
-string json = "{";
+string json = "[";
 
 void InitializeRooms();
 void WriteToFile(string filePath, string stringToWrite);
@@ -67,10 +67,6 @@ int main()
 
 	for (int i = 0; i < rooms.size(); i++)
 	{
-		json += "\" Room ";
-		json += to_string(rooms[i].roomID);
-		json += "\":";
-		
 		json += RoomToJSON(rooms[i]);
 
 		if (i != rooms.size() - 1)
@@ -79,7 +75,7 @@ int main()
 		}
 		else
 		{
-			json += "}";
+			json += "]";
 		}
 	}
 
