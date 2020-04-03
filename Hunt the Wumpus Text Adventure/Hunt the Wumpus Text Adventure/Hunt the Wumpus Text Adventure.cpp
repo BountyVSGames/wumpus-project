@@ -1,20 +1,34 @@
 #include "Room.hpp"
-#include "rapidjson-master/include/rapidjson/reader.h"
 
 room playerPlace;
+vector<room> rooms = {};
 
-room room1{ 1, { 8, 2, 3 } };
-room room2{ 2, { 1, 3, 4 } };
-room room3{ 3, { 1, 2, 4 } };
-room room4{ 4, { 2, 3, 5 } };
-room room5{ 5, { 4, 6, 7 } };
-room room6{ 6, { 5, 7, 8 } };
-room room7{ 7, { 5, 6, 8 } };
-room room8{ 8, { 1, 6, 7 } };
+void FillRoomVector(vector<room>& roomVec)
+{
+	ifstream file("config.json");		//stream
+	IStreamWrapper wrapper(file);		//wrapper
 
-vector<room> rooms = { room1, room2 , room3 ,room4, room5, room6, room7, room8 };
+	Document configFile;
+	configFile.ParseStream(wrapper);	//parse file
 
-void Intro(room & startRoom) 
+	vector<int> adjacentRoomsConf;
+	for (unsigned int x = 0; x < configFile.Size(); x++) {
+		for (Value& y : configFile[x]["adjacentRooms"].GetArray()) {
+			//maak vector aan met values van json file
+			adjacentRoomsConf.push_back(y.GetInt());
+		}
+		roomVec.push_back({						//maak nieuwe room object met json values en zet die in de vector
+			configFile[x]["roomID"].GetInt(),	//roomID
+			adjacentRoomsConf,					//adjacentRooms
+			configFile[x]["bat"].GetBool(),		//bat
+			configFile[x]["pit"].GetBool(),		//pit
+			configFile[x]["wumpus"].GetBool()	//wumpus
+			});
+		adjacentRoomsConf = {};
+	}
+}
+
+void Intro(room & startRoom)
 {
 	cout << "Welkom bij 'Hunt the Wumpus'! " << endl << endl;
 
@@ -56,21 +70,23 @@ void RoomSelection(room& currentRoom)
 	{
 		cout << "Je zit in kamer " << playerPlace.roomID << endl;
 		cout << "De gangen lijden naar " << currentRoom.adjacentRooms[0]
-			<< " " << currentRoom.adjacentRooms[1] << " " << currentRoom.adjacentRooms[2] << endl;
+			 << " " << currentRoom.adjacentRooms[1] << " " << currentRoom.adjacentRooms[2] << endl;
 
 		cout << "Naar welke gang?" << endl;
 
 		cin >> whichRoom;
 
+		cout << endl;
+
 		if (cin.fail())
 		{
 			cin.clear();
 			cin.ignore(numeric_limits<streamsize>::max(), '\n');
-			cout << "Input is ongeldig. Moet een nummer zijn. Probeer het nog een keer" << endl << endl;
+			cout << "Input Moet een nummer zijn. Probeer het nog een keer" << endl << endl;
 			continue;
 		}
 
-		if (!(whichRoom > rooms.size()) && (whichRoom == currentRoom.adjacentRooms[0] || whichRoom == currentRoom.adjacentRooms[1] || whichRoom == currentRoom.adjacentRooms[2]))
+		if (!(unsigned(whichRoom) > rooms.size()) && (whichRoom == currentRoom.adjacentRooms[0] || whichRoom == currentRoom.adjacentRooms[1] || whichRoom == currentRoom.adjacentRooms[2]))
 		{
 			break;
 		}
@@ -83,13 +99,30 @@ void RoomSelection(room& currentRoom)
 	EnterRoom(playerPlace);
 }
 
+void RandomBatRoom(room& playerPlace)
+{
+	cout << "Je bent in een kamer gekomen met vleermuizen!\n";
+	cout << "De vleermuizen brengen je naar een nieuwe kamer.\n\n";
+	srand((unsigned)time(NULL));
+	int randomRoom = rand() % 8;
+	while(randomRoom == (playerPlace.roomID - 1)) {
+		randomRoom = rand() % 8;
+	}
+	playerPlace = rooms[randomRoom];
+}
+
 void EnterRoom(room & room) 
 {
+	if (playerPlace.bat) {
+		RandomBatRoom(room);
+	}
 	RoomSelection(room);
 }
 
 int main()
 {
+	FillRoomVector(rooms);
+
 	playerPlace = rooms[0];
 
 	Intro(playerPlace);
