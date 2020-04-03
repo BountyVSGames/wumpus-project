@@ -1,7 +1,5 @@
-// Hunt the Wumpus Text Adventure.cpp : This file contains the 'main' function. Program execution begins and ends there.
-
 #include "Room.hpp"
-#include <limits>
+#include "rapidjson-master/include/rapidjson/reader.h"
 
 room playerPlace;
 
@@ -72,7 +70,7 @@ void RoomSelection(room& currentRoom)
 			continue;
 		}
 
-		if (!(whichRoom >= currentRoom.adjacentRooms.size()) && (whichRoom == currentRoom.adjacentRooms[0] || whichRoom == currentRoom.adjacentRooms[1] || whichRoom == currentRoom.adjacentRooms[2]))
+		if (!(whichRoom > rooms.size()) && (whichRoom == currentRoom.adjacentRooms[0] || whichRoom == currentRoom.adjacentRooms[1] || whichRoom == currentRoom.adjacentRooms[2]))
 		{
 			break;
 		}
@@ -84,6 +82,7 @@ void RoomSelection(room& currentRoom)
 
 	EnterRoom(playerPlace);
 }
+
 void EnterRoom(room & room) 
 {
 	RoomSelection(room);
@@ -91,7 +90,9 @@ void EnterRoom(room & room)
 
 int main()
 {
-	playerPlace = rooms[1];
+	playerPlace = rooms[0];
 
 	Intro(playerPlace);
+
+	return 0;
 }
