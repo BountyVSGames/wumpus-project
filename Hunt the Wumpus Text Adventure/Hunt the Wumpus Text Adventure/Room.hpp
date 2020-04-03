@@ -28,12 +28,11 @@ void Intro(room& startRoom);
 void EnterRoom(room& room);
 void RoomSelection(room& currentRoom);
 
-void BatRoom();
 void RandomBatRoom(room& playerplace);
 int RandomRoom();
-void WumpusRoom();
-void PitRoom();
-void FillRoomvector();
+void WumpusRoom(room& room);
+void PitRoom(room& room);
+void FillRoomVector(vector<room>& roomVec);
 void PitRoom(room& room);
 
 #endif // ROOM_HPP

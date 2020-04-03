@@ -4,7 +4,8 @@
 void GameStart();
 void GameOver(int winState);
 
-void PlayerShoot(int numberOfRooms);
+void PlayerInteraction();
+void PlayerShoot();
 void PlayerMove(int roomNumber);
 
 #endif // GAMEHPP
