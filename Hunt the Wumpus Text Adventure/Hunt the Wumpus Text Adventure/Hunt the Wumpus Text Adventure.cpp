@@ -253,7 +253,7 @@ void GameOver(player& currentPlayer, const bool& gameWon)
 	}
 }
 
-void GameStart(player& currentPlayer)
+bool GameStart(player& currentPlayer)
 {
 	Intro();
 	while (!currentPlayer.gameOver)	 //gameloop
@@ -270,7 +270,7 @@ void GameStart(player& currentPlayer)
 	{
 	case 'Y':
 		cout << "----------------------------------------------------------" << endl << endl;
-		return;
+		return true;
 	case 'N':
 		exit(0);
 	}
@@ -280,6 +280,9 @@ int main()
 {
 	FillRoomVector(rooms, "config.json");
 	player player{ rooms[0] };
-	GameStart(player);
+	while (GameStart(player))
+	{
+		player.gameOver = false;
+	}
 	return 0;
 }
