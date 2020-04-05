@@ -1,2 +1,0 @@
-D:\Documents\Git\wumpus-project\Config Wumpus\Debug\Config Wumpus.exe
-D:\Documents\Git\wumpus-project\Config Wumpus\Debug\Config Wumpus.pdb
