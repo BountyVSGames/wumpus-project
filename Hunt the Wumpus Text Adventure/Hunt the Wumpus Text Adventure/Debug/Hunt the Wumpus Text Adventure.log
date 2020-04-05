@@ -1,5 +1,0 @@
-﻿  Hunt the Wumpus Text Adventure.cpp
-C:\Users\yoeyt\Documents\GitHub\wumpus-project\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure.cpp(77,34): warning C4018: '>': signed/unsigned mismatch
-C:\Users\yoeyt\Documents\GitHub\wumpus-project\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure.cpp(232): warning C4715: 'RandomRoom': not all control paths return a value
-C:\Users\yoeyt\Documents\GitHub\wumpus-project\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure.cpp(277): warning C4715: 'GameStart': not all control paths return a value
-  Hunt the Wumpus Text Adventure.vcxproj -> C:\Users\yoeyt\Documents\GitHub\wumpus-project\Hunt the Wumpus Text Adventure\Debug\Hunt the Wumpus Text Adventure.exe
