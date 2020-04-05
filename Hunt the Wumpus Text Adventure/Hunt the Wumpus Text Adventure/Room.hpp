@@ -1,5 +1,4 @@
-#ifndef ROOM_HPP
-#define ROOM_HPP
+#pragma once
 
 #include <vector>
 #include <iostream>
@@ -7,6 +6,7 @@
 #include <fstream>
 #include "rapidjson-master/include/rapidjson/istreamwrapper.h"
 #include "rapidjson-master/include/rapidjson/document.h"
+#include "rapidjson-master/include/rapidjson/reader.h"
 #include <cstdlib>
 #include <stdlib.h>
 #include <time.h>
@@ -23,16 +23,19 @@ struct room
 	bool wumpus = false;
 };
 
-void Intro(room& startRoom);
+struct player
+{
+	room currentRoom;
+	int arrows = 5;
+	bool gameOver = false;
+};
 
-void EnterRoom(room& room);
-void RoomSelection(room& currentRoom);
+void Intro();
 
-void RandomBatRoom(room& playerplace);
+void EnterRoom(player& currentPlayer);
+void RoomSelection(player& currentPlayer);
+
+void RandomBatRoom(player& currentPlayer);
 int RandomRoom();
-void WumpusRoom(room& room);
-void PitRoom(room& room);
-void FillRoomVector(vector<room>& roomVec);
-void PitRoom(room& room);
-
-#endif // ROOM_HPP
+void WumpusRoom(player& currentPlayer);
+void FillRoomVector(vector<room>& roomVec, const string& fileName);

@@ -1,6 +1,4 @@
 ﻿  Hunt the Wumpus Text Adventure.cpp
-D:\Documents\Git\wumpus-project\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure.cpp(2,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-D:\Documents\Git\wumpus-project\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure.cpp(141,38): warning C4018: '>': signed/unsigned mismatch
-D:\Documents\Git\wumpus-project\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure.cpp(146,36): warning C4018: '>': signed/unsigned mismatch
-D:\Documents\Git\wumpus-project\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure.cpp(255): warning C4715: 'RandomRoom': not all control paths return a value
-  Hunt the Wumpus Text Adventure.vcxproj -> D:\Documents\Git\wumpus-project\Hunt the Wumpus Text Adventure\Debug\Hunt the Wumpus Text Adventure.exe
+C:\Users\yoeyt\Documents\GitHub\wumpus-project\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure.cpp(77,34): warning C4018: '>': signed/unsigned mismatch
+C:\Users\yoeyt\Documents\GitHub\wumpus-project\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure.cpp(232): warning C4715: 'RandomRoom': not all control paths return a value
+  Hunt the Wumpus Text Adventure.vcxproj -> C:\Users\yoeyt\Documents\GitHub\wumpus-project\Hunt the Wumpus Text Adventure\Debug\Hunt the Wumpus Text Adventure.exe

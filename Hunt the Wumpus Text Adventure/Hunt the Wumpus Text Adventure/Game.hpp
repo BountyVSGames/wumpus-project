@@ -1,11 +1,7 @@
-#ifndef GAME_HPP
-#define GAME_HPP
+#pragma once
 
-void GameStart();
-void GameOver(int winState);
+void GameStart(player& currentRoom);
+void GameOver(player& currentRoom, const bool& gameWon);
 
-void PlayerInteraction();
-void PlayerShoot();
-void PlayerMove(int roomNumber);
-
-#endif // GAMEHPP
+void PlayerInteraction(player& currentRoom);
+void PlayerShoot(player& currentRoom);
