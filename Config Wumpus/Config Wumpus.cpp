@@ -128,7 +128,7 @@ void TieLooseEnd(vector<room>& map, vector<room>& availableRooms)
 	map[availableRooms[randomRoomToTie].roomID].adjacentRooms.push_back(availableRooms[tieStart].roomID);
 }
 
-bool RandomRoomGeneration(vector<room>& map)
+bool RandomRoomGeneration(vector<room>& map, const int& aantalRooms=20)
 {
 	srand(unsigned(time(NULL)));	//seed hangt af van runtime values
 
@@ -138,7 +138,7 @@ bool RandomRoomGeneration(vector<room>& map)
 
 	int it = 0;
 
-	for (int roomID = 1; roomID != 20; roomID++)
+	for (int roomID = 1; roomID != aantalRooms; roomID++)
 	{
 		//maak de nieuwe room aan een random kant vast van een random room in available rooms
 		int randRoom = rand() % availableRooms.size();
@@ -237,7 +237,13 @@ int main()
 		cin >> option;
 	}
 	if (option == 'R') {
-		while (!RandomRoomGeneration(map))
+		int roomOption = 0;
+		cout << "Hoeveel rooms? (Geef een even getal van 6 t/m 50) ";
+		while (roomOption < 6 || roomOption > 50 || (roomOption % 2) != 0)
+		{
+			cin >> roomOption;
+		}
+		while (!RandomRoomGeneration(map, roomOption))
 		{
 			cout << "\nmap is ongeldig, nieuwe map aan het genereren...\n\n";
 			map = {};
