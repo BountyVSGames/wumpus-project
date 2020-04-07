@@ -14,17 +14,17 @@ void FillRoomVector(vector<room>& roomVec, const string& fileName)
 	vector<int> adjacentRoomsConf;
 	for (unsigned int x = 0; x < configFile.Size(); x++)
 	{
-		for (Value& y : configFile[x]["adjacentRooms"].GetArray())
+		for (Value& y : configFile[x]["Adjacent Rooms"].GetArray())
 		{
 			//maak vector aan met values van json file
 			adjacentRoomsConf.push_back(y.GetInt());
 		}
 		roomVec.push_back({						//maak nieuwe room object met json values en zet die in de vector
-			configFile[x]["roomID"].GetInt(),	//roomID
+			configFile[x]["Room ID"].GetInt(),	//roomID
 			adjacentRoomsConf,					//adjacentRooms
-			configFile[x]["bat"].GetBool(),		//bat
-			configFile[x]["pit"].GetBool(),		//pit
-			configFile[x]["wumpus"].GetBool()	//wumpus
+			configFile[x]["Bat"].GetBool(),		//bat
+			configFile[x]["Pit"].GetBool(),		//pit
+			configFile[x]["Wumpus"].GetBool()	//wumpus
 			});
 		adjacentRoomsConf = {};
 	}
@@ -37,24 +37,20 @@ void WumpusRoom(player& currentPlayer)
 		GameOver(currentPlayer, false);
 		return;
 	}
-	else {
-		bool found = false;
-		for (unsigned int x = 0; x != 3; x++) {
-			int adjacentRoomIndexX = rooms[currentPlayer.currentRoom.adjacentRooms[x] - 1].roomID - 1;
-			for (unsigned int y = 0; y != 3; y++) {
-				int adjacentRoomIndexY = rooms[adjacentRoomIndexX].adjacentRooms[y] - 1;
-				if (rooms[adjacentRoomIndexY].wumpus) {
-					cout << "Je ruikt de wumpus...\n";
-					found = true;
-					break;
-				}
-			}
-			if (rooms[adjacentRoomIndexX].wumpus) {
-				cout << "Je ruikt de wumpus...\n";
+	bool found = false;
+	for (unsigned int x = 0; x != 3; x++) {
+		int adjacentRoomIndexX = rooms[currentPlayer.currentRoom.adjacentRooms[x]].roomID;
+		for (unsigned int y = 0; y != 3; y++) {
+			int adjacentRoomIndexY = rooms[adjacentRoomIndexX].adjacentRooms[y];
+			if (rooms[adjacentRoomIndexY].wumpus) {
 				found = true;
+				break;
 			}
-			if (found) { break; }
 		}
+		if (rooms[adjacentRoomIndexX].wumpus) {
+			found = true;
+		}
+		if (found) { cout << "Je ruikt de wumpus...\n"; break; }
 	}
 }
 
@@ -65,7 +61,8 @@ void PlayerShoot(player& currentPlayer)
 
 	cout << "Je hebt nog " << currentPlayer.arrows << " pijlen." << endl;
 
-	while (numberRooms < 1 || numberRooms > currentPlayer.arrows) {
+	while (numberRooms < 1 || numberRooms > currentPlayer.arrows)
+	{
 		cout << "Hoeveel tunnels wil je doorschieten (1 tot " << currentPlayer.arrows << ")?";
 		cin >> numberRooms;
 	}
@@ -74,11 +71,13 @@ void PlayerShoot(player& currentPlayer)
 	{
 		cout << "kamer: ";
 		cin >> whichRoom;
-		if (whichRoom < 1 || whichRoom > rooms.size()) {
+		whichRoom--;
+
+		if (whichRoom < 0 || whichRoom >= rooms.size()) {
 			cout << "Die kamer bestaat niet\n";
 			continue;
 		}
-		if (rooms[whichRoom - 1].wumpus)
+		if (rooms[whichRoom].wumpus)
 		{
 			cout << "Gefeliciteerd je hebt de Wumpus verslagen!\n\n";
 			GameOver(currentPlayer, true);
@@ -102,12 +101,13 @@ void RoomSelection(player& currentPlayer)
 
 	while (true)
 	{
-		cout << "De gangen lijden naar " << currentPlayer.currentRoom.adjacentRooms[0]
-			<< " " << currentPlayer.currentRoom.adjacentRooms[1] << " " << currentPlayer.currentRoom.adjacentRooms[2] << endl;
+		cout << "De gangen lijden naar " << (currentPlayer.currentRoom.adjacentRooms[0] + 1)
+			<< " " << (currentPlayer.currentRoom.adjacentRooms[1] + 1) << " " << (currentPlayer.currentRoom.adjacentRooms[2] + 1) << endl;
 
 		cout << "Naar welke gang? ";
 
 		cin >> whichRoom;
+		whichRoom--;
 
 		cout << '\n';
 
@@ -119,7 +119,9 @@ void RoomSelection(player& currentPlayer)
 			continue;
 		}
 
-		if (!(unsigned(whichRoom) > rooms.size()) && (whichRoom == currentPlayer.currentRoom.adjacentRooms[0] || whichRoom == currentPlayer.currentRoom.adjacentRooms[1] || whichRoom == currentPlayer.currentRoom.adjacentRooms[2]))
+		if (whichRoom == currentPlayer.currentRoom.adjacentRooms[0] ||
+			whichRoom == currentPlayer.currentRoom.adjacentRooms[1] ||
+			whichRoom == currentPlayer.currentRoom.adjacentRooms[2])
 		{
 			break;
 		}
@@ -127,7 +129,7 @@ void RoomSelection(player& currentPlayer)
 		cout << "Input is ongeldig, Probeer het nog een keer.\n\n";
 	}
 
-	currentPlayer.currentRoom = rooms[whichRoom - 1];
+	currentPlayer.currentRoom = rooms[whichRoom];
 
 	EnterRoom(currentPlayer);
 }
@@ -138,7 +140,7 @@ void PlayerInteraction(player& currentPlayer)
 
 	while (playerChoose != 'S' && playerChoose != 'M')
 	{
-		cout << "Je zit in kamer " << currentPlayer.currentRoom.roomID << endl;
+		cout << "Je zit in kamer " << (currentPlayer.currentRoom.roomID + 1) << endl;
 		cout << "Wil je schieten of lopen (S/M) ";
 
 		cin >> playerChoose;
@@ -191,23 +193,29 @@ void Intro()
 
 void RandomBatRoom(player& currentPlayer)
 {
-	srand((unsigned)time(NULL));
+	srand((unsigned)time(NULL));	//maak seed aan gebasseerd op runtime zodat deze uniek is
+
 	int randomRoom = rand() % rooms.size();
-	while (randomRoom == (currentPlayer.currentRoom.roomID - 1)) {
+	while (randomRoom == currentPlayer.currentRoom.roomID) {
+		//kies een random integer todat deze integer niet gelijk staat aan de kamer waar de player al in zit
 		randomRoom = rand() % rooms.size();
 	}
-	currentPlayer.currentRoom = rooms[randomRoom];
-	cout << "Je bent in een kamer gekomen met vleermuizen!\nDe vleermuizen brengen je naar kamer " << currentPlayer.currentRoom.roomID << "!\n\n";
+
+	currentPlayer.currentRoom = rooms[randomRoom];	//verander de current room van de player naar de nieuwe random room
+
+	cout << "Je bent in een kamer gekomen met vleermuizen!\nDe vleermuizen brengen je naar kamer " << (currentPlayer.currentRoom.roomID + 1) << "!\n\n";
 }
 
 void EnterRoom(player& currentPlayer)
 {
 	if (currentPlayer.currentRoom.bat)
 	{
+		//als bat = true bij de kamer waar de player in zit, roep dan RandomBatRoom() aan
 		RandomBatRoom(currentPlayer);
 	}
 	else if (currentPlayer.currentRoom.pit)
 	{
+		//als pit = true bij huidige kamer roep dan GameOver() aan
 		cout << "Je bent in een bodemloze put gevallen...\n\n";
 		GameOver(currentPlayer, false);
 		return;
@@ -218,7 +226,8 @@ void EnterRoom(player& currentPlayer)
 
 int RandomRoom()
 {
-	srand((unsigned)time(0));
+	//niet in gebruik
+	srand((unsigned)time(NULL));
 	int randomRoom = rand() % 8 + 1;
 
 	for (unsigned int i = 0; i < 20; i++) {
@@ -246,7 +255,7 @@ void GameOver(player& currentPlayer, const bool& gameWon)
 			{
 				if (rooms[x].wumpus)
 				{
-					cout << "De Wumpus zat in room " << rooms[x].roomID << "!\n";
+					cout << "De Wumpus zat in room " << (rooms[x].roomID + 1) << "!\n";
 				}
 			}
 		}
@@ -269,20 +278,57 @@ bool GameStart(player& currentPlayer)
 	switch (option)
 	{
 	case 'Y':
-		cout << "----------------------------------------------------------" << endl << endl;
+		cout << "\n----------------------------------------------------------" << endl << endl;
+		currentPlayer.currentRoom = rooms[0];
+		currentPlayer.gameOver = false;
 		return true;
 	case 'N':
-		exit(0);
+		return false;
+	}
+}
+
+bool MenuScreen() {
+	system("CLS");	//leeg console
+	char choice = '0';
+	cout << " ___________________________________________________________________" << endl;
+	cout << "|                         HUNT THE WUMPUS                           |" << endl;
+	cout << "|                                                                   |" << endl;
+	cout << "|                                                                   |" << endl;
+	cout << "|                         Kies een optie(1, 2, 3):                  |" << endl;
+	cout << "|    _________________   ___________________   _________________    |" << endl;
+	cout << "|   |                 | |                   | |                 |   |" << endl;
+	cout << "|   | 1. spelen       | | 2. Leaderboards   | | 3.     AI       |   |" << endl;
+	cout << "|   |_________________| |___________________| |_________________|   |" << endl;
+	cout << "|___________________________________________________________________|" << endl;
+
+	cin >> choice;
+
+	system("CLS");
+
+	if (choice == '1') {
+
+		FillRoomVector(rooms, "config.json");
+		player player{ rooms[0] };
+
+		while (GameStart(player)) {}
+		return true;
+	}
+	else if (choice == '2') {
+		cout << "Hier komt het leaderboard" << endl;
+		return true;
+	}
+	else if (choice == '3') {
+		cout << "Hier komt de aanroep van de AI" << endl;
+		return true;
+	}
+	else {
+		cout << "Je hebt een foute invoer gegeven!";
+		return false;
 	}
 }
 
 int main()
 {
-	FillRoomVector(rooms, "config.json");
-	player player{ rooms[0] };
-	while (GameStart(player))
-	{
-		player.gameOver = false;
-	}
+	while(MenuScreen());
 	return 0;
 }
