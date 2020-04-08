@@ -1,9 +1,9 @@
 #include "Room.hpp"
 #include "Game.hpp"
 
-vector<room> rooms = {};
+vector<room> rooms = {};	//alleen ReadConfigInfo veranderd rooms, dus globale variable is oke in dit geval
 
-void FillRoomVector(vector<room>& roomVec, const string& fileName)
+void ReadConfigInfo(vector<room>& roomVec, const string& fileName, player& currentPlayer)
 {
 	ifstream file(fileName);		//stream
 	IStreamWrapper wrapper(file);		//wrapper
@@ -12,22 +12,158 @@ void FillRoomVector(vector<room>& roomVec, const string& fileName)
 	configFile.ParseStream(wrapper);	//parse file
 
 	vector<int> adjacentRoomsConf;
-	for (unsigned int x = 0; x < configFile.Size(); x++)
+	for (unsigned int x = 0; x != configFile["Rooms"].Size(); x++)
 	{
-		for (Value& y : configFile[x]["Adjacent Rooms"].GetArray())
+		for (Value& y : configFile["Rooms"][x]["Adjacent Rooms"].GetArray())
 		{
 			//maak vector aan met values van json file
 			adjacentRoomsConf.push_back(y.GetInt());
 		}
-		roomVec.push_back({						//maak nieuwe room object met json values en zet die in de vector
-			configFile[x]["Room ID"].GetInt(),	//roomID
-			adjacentRoomsConf,					//adjacentRooms
-			configFile[x]["Bat"].GetBool(),		//bat
-			configFile[x]["Pit"].GetBool(),		//pit
-			configFile[x]["Wumpus"].GetBool()	//wumpus
+		roomVec.push_back({									//maak nieuwe room object met json values en zet die in de vector
+			configFile["Rooms"][x]["Room ID"].GetInt(),		//roomID
+			adjacentRoomsConf,								//adjacentRooms
+			configFile["Rooms"][x]["Bat"].GetBool(),		//bat
+			configFile["Rooms"][x]["Pit"].GetBool(),		//pit
+			configFile["Rooms"][x]["Wumpus"].GetBool()		//wumpus
 			});
 		adjacentRoomsConf = {};
 	}
+	cout << fileName << " is succesvol ingeladen!\n\n";
+	if (configFile["Players"].Empty())
+	{
+		cout << "Er zijn nog geen bestaande spelers op" << fileName << "\n\n";
+	}
+	else
+	{
+		cout << "Spelers op " << fileName << ": ";
+		for (unsigned int x = 0; x != (configFile["Players"].Size() - 1); x++)
+		{
+			cout << configFile["Players"][x]["Player Name"].GetString() << ", ";
+		}
+		cout << configFile["Players"][configFile["Players"].Size() - 1]["Player Name"].GetString() << "\n\n";
+	}
+
+	cout << "Geef je speler een naam van maximaal 20 characters, of kies een player: ";
+	while (currentPlayer.playerName.empty() || currentPlayer.playerName.size() > 20)
+	{
+		getline(cin, currentPlayer.playerName);
+	}
+	for (unsigned int x = 0; x != configFile["Players"].Size(); x++)
+	{
+		//check of de opgegeven naam al bestaat
+		if (currentPlayer.playerName == configFile["Players"][x]["Player Name"].GetString())
+		{
+			//laad player informatie in
+			currentPlayer.gamesPlayed = configFile["Players"][x]["Games Played"].GetInt();
+			currentPlayer.turns = configFile["Players"][x]["Turns"].GetInt();
+			currentPlayer.mapCompleted = configFile["Players"][x]["Map Completed"].GetBool();
+
+			cout << "informatie opgehaald\n\n";
+			break;
+		}
+	}
+	file.close();
+}
+
+void WritePlayerInfo(const player& currentPlayer, const string& fileName)
+{
+	//open filestream voor read en write
+	ifstream inFile(fileName);			//input stream
+	IStreamWrapper inWrapper(inFile);		//wrapper
+
+	Document configFile, configFileAppend;
+	configFile.ParseStream(inWrapper);	//parse file
+
+	configFile.IsObject();
+	inFile.close();
+
+	for (unsigned int x = 0; x != configFile["Players"].Size(); x++)
+	{
+		//check of de opgegeven naam al bestaat
+		if (currentPlayer.playerName == configFile["Players"][x]["Player Name"].GetString())
+		{
+			//remove
+			configFile["Players"].Erase(configFile["Players"].Begin() + x);
+			break;
+		}
+	}
+
+	//add
+
+	configFileAppend.SetObject();
+
+	Value playerObject(kObjectType);	//maak nieuw object
+
+	Value name;
+	char buffer[20];														//char buffer
+	int len = sprintf_s(buffer, "%s", currentPlayer.playerName.c_str());	//converteer naar dynamische char pointer
+	name.SetString(buffer, len, configFileAppend.GetAllocator());			//maak name char pointer
+
+	//voeg members toe aan object
+	playerObject.AddMember("Player Name", name, configFileAppend.GetAllocator());
+	playerObject.AddMember("Games Played", currentPlayer.gamesPlayed, configFileAppend.GetAllocator());
+	playerObject.AddMember("Turns", currentPlayer.turns, configFileAppend.GetAllocator());
+	playerObject.AddMember("Map Completed", currentPlayer.mapCompleted, configFileAppend.GetAllocator());
+
+	//voeg object toe aan Players lijst
+	configFile["Players"].PushBack(playerObject, configFileAppend.GetAllocator());
+
+
+	ofstream outFile(fileName);				//output stream
+	OStreamWrapper outWrapper(outFile);		//wrapper
+
+	Writer<OStreamWrapper> writer(outWrapper);
+	configFile.Accept(writer);
+
+	outFile.close();
+}
+
+string ChooseMap()
+{
+	string configFile = "";
+	while (true)
+	{
+		cout << "Welke map wil je inladen? ";
+		cin >> configFile;
+		configFile += ".json";
+		ifstream checkConf(configFile);
+		if (checkConf.good())
+		{
+			break;
+		}
+		else
+		{
+			cout << "Deze file bestaat niet, probeer het opnieuw\n\n";
+		}
+	}
+	system("CLS");
+	return configFile;
+}
+
+void PrintLeaderboard(const string& fileName)
+{
+	ifstream file(fileName);			//stream
+	IStreamWrapper wrapper(file);		//wrapper
+
+	Document configFile;
+	configFile.ParseStream(wrapper);	//parse file
+
+	cout << "Leaderboards van " << fileName << endl;
+	cout << "-------------------------------------------------------------\n";
+	cout << "Speler Naam		Aantal keer gespeeld		Beurten			Map Compleet\n\n";
+	for (unsigned int x = 0; x != configFile["Players"].Size(); x++)
+	{
+		cout << configFile["Players"][x]["Player Name"].GetString() << "\t\t";
+		cout << configFile["Players"][x]["Games Played"].GetInt() << "\t\t\t\t";
+		cout << configFile["Players"][x]["Turns"].GetInt() << "\t\t\t";
+		if (configFile["Players"][x]["Map Completed"].GetBool())
+		{
+			cout << "x";
+		}
+		cout << "\n\n";
+	}
+	system("pause");
+	file.close();
 }
 
 void WumpusRoom(player& currentPlayer)
@@ -148,6 +284,7 @@ void PlayerInteraction(player& currentPlayer)
 
 		cout << '\n';
 	}
+	currentPlayer.turns++;
 
 	switch (playerChoose)
 	{
@@ -245,6 +382,8 @@ void GameOver(player& currentPlayer, const bool& gameWon)
 {
 	cout << "-------------------------------------------------------------\n\n";
 	currentPlayer.gameOver = true;
+	currentPlayer.gamesPlayed++;
+
 	if (!gameWon)
 	{
 		char option = '1';
@@ -261,15 +400,22 @@ void GameOver(player& currentPlayer, const bool& gameWon)
 			}
 		}
 	}
+	else
+	{
+		currentPlayer.mapCompleted = true;
+	}
 }
 
-bool GameStart(player& currentPlayer)
+bool GameStart(player& currentPlayer, const string fileName)
 {
 	Intro();
 	while (!currentPlayer.gameOver)	 //gameloop
 	{
 		PlayerInteraction(currentPlayer);
 	}
+
+	WritePlayerInfo(currentPlayer, fileName);
+
 	char option = '1';
 	while (option != 'Y' && option != 'N')
 	{
@@ -288,48 +434,63 @@ bool GameStart(player& currentPlayer)
 	}
 }
 
-bool MenuScreen() {
+bool MenuScreen(string& mapFile, player& currentPlayer)
+{
 	system("CLS");	//leeg console
 	char choice = '0';
-	cout << " ___________________________________________________________________" << endl;
-	cout << "|                         HUNT THE WUMPUS                           |" << endl;
-	cout << "|                                                                   |" << endl;
-	cout << "|                                                                   |" << endl;
-	cout << "|                         Kies een optie(1, 2, 3):                  |" << endl;
-	cout << "|    _________________   ___________________   _________________    |" << endl;
-	cout << "|   |                 | |                   | |                 |   |" << endl;
-	cout << "|   | 1. spelen       | | 2. Leaderboards   | | 3.     AI       |   |" << endl;
-	cout << "|   |_________________| |___________________| |_________________|   |" << endl;
-	cout << "|___________________________________________________________________|" << endl;
+
+	cout << "Huidige map: " << mapFile << endl;
+	cout << " _________________________________________________________________________________________________________" << endl;
+	cout << "|                                             HUNT THE WUMPUS                                             |" << endl;
+	cout << "|                                                                                                         |" << endl;
+	cout << "|                                                                                                         |" << endl;
+	cout << "|                                             Kies een optie                                              |" << endl;
+	cout << "|    _________________   _________________   _________________   _________________   _________________    |" << endl;
+	cout << "|   |                 | |                 | |                 | |                 | |                 |   |" << endl;
+	cout << "|   | 1.   Spelen     | | 2. Leaderboard  | | 3.    AI        | | 4.    Quit      | | 5.    Map       |   |" << endl;
+	cout << "|   |_________________| |_________________| |_________________| |_________________| |_________________|   |" << endl;
+	cout << "|_________________________________________________________________________________________________________|" << endl;
 
 	cin >> choice;
 
 	system("CLS");
 
-	if (choice == '1') {
+	switch (choice)
+	{
+	case '1':
+		if (mapFile.empty())
+		{
+			mapFile = ChooseMap();
+		}
+		ReadConfigInfo(rooms, mapFile, currentPlayer);
+		currentPlayer.currentRoom = rooms[0];
+		currentPlayer.gameOver = false;
 
-		FillRoomVector(rooms, "config.json");
-		player player{ rooms[0] };
-
-		while (GameStart(player)) {}
+		while (GameStart(currentPlayer, mapFile)) {}
+		return true;
+	case '2':
+		if (mapFile.empty())
+		{
+			mapFile = ChooseMap();
+		}
+		PrintLeaderboard(mapFile);
+		return true;
+	case '3':
+		cout << "AI\n";
+		return true;
+	case '4':
+		return false;	//quit
+	case '5':
+		mapFile = ChooseMap();
 		return true;
 	}
-	else if (choice == '2') {
-		cout << "Hier komt het leaderboard" << endl;
-		return true;
-	}
-	else if (choice == '3') {
-		cout << "Hier komt de aanroep van de AI" << endl;
-		return true;
-	}
-	else {
-		cout << "Je hebt een foute invoer gegeven!";
-		return false;
-	}
+	return true;
 }
 
 int main()
 {
-	while(MenuScreen());
+	player player;
+	string mapFile;
+	while(MenuScreen(mapFile, player));
 	return 0;
 }
