@@ -63,11 +63,11 @@ void PlayerShoot(player& currentPlayer)
 
 	while (numberRooms < 1 || numberRooms > currentPlayer.arrows)
 	{
-		cout << "Hoeveel tunnels wil je doorschieten (1 tot " << currentPlayer.arrows << ")?";
+		cout << "Hoeveel tunnels wil je doorschieten (1 tot " << currentPlayer.arrows << ")? ";
 		cin >> numberRooms;
 	}
 
-	while (true)
+	for(unsigned int x = numberRooms; x != 0; x--)
 	{
 		cout << "kamer: ";
 		cin >> whichRoom;
@@ -75,6 +75,7 @@ void PlayerShoot(player& currentPlayer)
 
 		if (whichRoom < 0 || whichRoom >= rooms.size()) {
 			cout << "Die kamer bestaat niet\n";
+			x++;
 			continue;
 		}
 		if (rooms[whichRoom].wumpus)
