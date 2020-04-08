@@ -276,13 +276,46 @@ bool GameStart(player& currentPlayer)
 	}
 }
 
-int main()
-{
+int startingGame() {
 	FillRoomVector(rooms, "config.json");
 	player player{ rooms[0] };
 	while (GameStart(player))
 	{
 		player.gameOver = false;
 	}
+	return 0;
+}
+
+void FirstScreen() {
+	string choice;
+	cout << " ___________________________________________________________________" << endl;
+	cout << "|                         HUNT THE WUMPUS                           |" << endl;
+	cout << "|                                                                   |" << endl;
+	cout << "|                                                                   |" << endl;
+	cout << "|                         Kies een optie(1, 2, 3):                  |" << endl;
+	cout << "|    _________________   ___________________   _________________    |" << endl;
+	cout << "|   |                 | |                   | |                 |   |" << endl;
+	cout << "|   | 1. spelen       | | 2. Leaderboards   | | 3.      AI      |   |" << endl;
+	cout << "|   |_________________| |___________________| |_________________|   |" << endl;
+	cout << "|___________________________________________________________________|" << endl;
+	cin >> choice;
+	if (choice == "1") {
+		startingGame();
+	}
+	else if (choice == "2") {
+		cout << "Hier komt het leaderboard" << endl;
+	}
+	else if (choice == "3") {
+		cout << "Hier komt de aanroep van de AI" << endl;
+	}
+	else {
+		cout << "Je hebt een fout invoer gegeven!";
+		exit(0);
+	}
+}
+
+int main()
+{
+	FirstScreen();
 	return 0;
 }
