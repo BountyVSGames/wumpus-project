@@ -1,7 +1,7 @@
 #include "Room.h";
 
 vector<room> map;
-string json = "[";	//waarom?
+string json = "{\"Rooms\":[";	//waarom?
 
 void InitializeRooms();
 void WriteToFile(string filePath, string stringToWrite);
@@ -308,7 +308,7 @@ int main()
 		}
 		else
 		{
-			json += "]";
+			json += "],\"Players\":[]}";
 		}
 	}
 
