@@ -17,8 +17,8 @@ int main()
 {
 	string levelName;
 
-	int roomBat[2] = { 0,0 };
-	int roomPit[2] = { 0,0 };
+	vector<int> roomBat = { 0,0 };
+	vector<int> roomPit = { 0,0 };
 	int roomWumpus = 0;
 
 	InitializeRooms();
@@ -26,7 +26,9 @@ int main()
 	cout << "Insert level name: ";
 	cin >> levelName;
 
-	for (int i = 0; i < sizeof(roomBat); i++)
+	cout << roomBat.size();
+
+	for (int i = 0; i < roomBat.size(); i++)
 	{
 		while (roomBat[i] == 0)
 		{
@@ -40,7 +42,7 @@ int main()
 			}
 		}
 	}
-	for (int i = 0; i < sizeof(roomPit); i++)
+	for (int i = 0; i < roomPit.size(); i++)
 	{
 		while (roomPit[i] == 0)
 		{
@@ -64,6 +66,17 @@ int main()
 		cout << "Insert room name that contains the wumpus (1-20): ";
 		cin >> roomWumpus;
 	}
+
+	for (int i = 0; i < roomBat.size() - 1; i++)
+	{
+		rooms[roomBat[i] - 1].bat = true;
+	}
+	for (int i = 0; i < roomPit.size() - 1; i++)
+	{
+		rooms[roomPit[i] - 1].pit = true;
+	}
+
+	rooms[roomWumpus].wumpus = true;
 
 	for (int i = 0; i < rooms.size(); i++)
 	{
@@ -89,7 +102,7 @@ void InitializeRooms()
 	for (int i = 0; i < 20; i++)
 	{
 		Room newRoom;
-		newRoom.roomID = i + i;
+		newRoom.roomID = i + 1;
 
 		rooms.push_back(newRoom);
 	}
@@ -131,10 +144,10 @@ string RoomToJSON(Room room)
 
 	writer.StartObject();
 
-	writer.Key("Room ID");
+	writer.Key("roomID");
 	writer.Uint(room.roomID);
 
-	writer.Key("Adjacent Rooms");
+	writer.Key("adjacentRooms");
 	writer.StartArray();
 
 	for (int i = 0; i < room.adjacentRooms.size(); i++)
@@ -144,11 +157,11 @@ string RoomToJSON(Room room)
 
 	writer.EndArray();
 
-	writer.Key("Bat");
+	writer.Key("bat");
 	writer.Bool(room.bat);
-	writer.Key("Pit");
+	writer.Key("pit");
 	writer.Bool(room.pit);
-	writer.Key("Wumpus");
+	writer.Key("wumpus");
 	writer.Bool(room.wumpus);
 
 	writer.EndObject();

@@ -18,12 +18,18 @@
     <ClCompile Include="Hunt the Wumpus Text Adventure.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Room.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AI.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

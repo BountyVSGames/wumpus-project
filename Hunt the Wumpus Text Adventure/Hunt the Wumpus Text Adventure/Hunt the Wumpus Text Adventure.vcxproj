@@ -151,9 +151,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AI.cpp" />
     <ClCompile Include="Hunt the Wumpus Text Adventure.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AI.hpp" />
     <ClInclude Include="Game.hpp" />
     <ClInclude Include="Room.hpp" />
   </ItemGroup>
