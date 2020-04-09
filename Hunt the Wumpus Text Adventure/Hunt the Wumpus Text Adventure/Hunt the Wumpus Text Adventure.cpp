@@ -183,11 +183,11 @@ void PrintLineToConsole(string print)
 
 void ReadConfigInfo(vector<room>& roomVec, const string& fileName, playerstruct& currentPlayer)
 {
-	ifstream file(fileName);		//stream
-	IStreamWrapper wrapper(file);		//wrapper
+	ifstream file(fileName);		//open file
+	IStreamWrapper wrapper(file);		//apply wrapper rapidjson
 
-	Document configFile;
-	configFile.ParseStream(wrapper);	//parse file
+	Document configFile;				
+	configFile.ParseStream(wrapper);	//parse
 
 	vector<int> adjacentRoomsConf;
 	for (unsigned int x = 0; x != configFile["Rooms"].Size(); x++)
@@ -209,7 +209,7 @@ void ReadConfigInfo(vector<room>& roomVec, const string& fileName, playerstruct&
 	cout << fileName << " is succesvol ingeladen!\n\n";
 	if (configFile["Players"].Empty())
 	{
-		cout << "Er zijn nog geen bestaande spelers op" << fileName << "\n\n";
+		cout << "Er zijn nog geen bestaande spelers op " << fileName << "\n\n";
 	}
 	else
 	{
@@ -330,6 +330,7 @@ void PrintLeaderboard(const string& fileName)
 	cout << "Speler Naam		Aantal keer gespeeld		Beurten			Map Compleet\n\n";
 	for (unsigned int x = 0; x != configFile["Players"].Size(); x++)
 	{
+		//print stats van elke speler
 		cout << configFile["Players"][x]["Player Name"].GetString() << "\t\t";
 		cout << configFile["Players"][x]["Games Played"].GetInt() << "\t\t\t\t";
 		cout << configFile["Players"][x]["Turns"].GetInt() << "\t\t\t";
@@ -339,8 +340,11 @@ void PrintLeaderboard(const string& fileName)
 		}
 		cout << "\n\n";
 	}
-	system("pause");
 	file.close();
+
+	cout << "Druk op [ENTER] om terug naar het menu te gaan";
+	cin.ignore();
+	cin.get();
 }
 void WumpusRoom(playerstruct& currentPlayer)
 {
@@ -589,8 +593,8 @@ bool GameStart(playerstruct& currentPlayer, const string fileName)
 
 bool MenuScreen(string& mapFile, playerstruct& currentPlayer)
 {
-	system("CLS");								//leeg console
-	int choice = 0;								//tmp-variable value
+	system("CLS");		//leeg console
+	int choice = 0;		//tmp-variable value
 
 	cout << "Huidige map: " << mapFile << endl;
 	cout << " _________________________________________________________________________________________________________" << endl;
