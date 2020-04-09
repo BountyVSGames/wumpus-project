@@ -12,8 +12,10 @@
 #include <thread>
 
 #include "rapidjson-master/include/rapidjson/istreamwrapper.h"
+#include "rapidjson-master/include/rapidjson/ostreamwrapper.h"
 #include "rapidjson-master/include/rapidjson/document.h"
 #include "rapidjson-master/include/rapidjson/reader.h"
+#include "rapidjson-master/include/rapidjson/writer.h"
 
 using namespace std;
 using namespace rapidjson;
@@ -27,18 +29,23 @@ struct room
 	bool wumpus = false;
 };
 
+struct playerstruct
+{
+	string playerName;
+	room currentRoom;
+	int arrows = 5;
+	bool gameOver = false;
+	int gamesPlayed = 0;
+	int turns = 0;
+	bool mapCompleted = false;
+};
+
 struct aiplayer
 {
 	vector<room> roomsVisited = {};
 	vector<room> batRooms = {};
 	vector<room> pitRooms = {};
 	vector<room> possibleWumpusRooms = {};
-};
-struct playerstruct
-{
-	room currentRoom;
-	int arrows = 5;
-	bool gameOver = false;
 };
 
 bool GameStart(playerstruct& currentRoom);
