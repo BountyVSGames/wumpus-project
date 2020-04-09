@@ -120,23 +120,22 @@ void WritePlayerInfo(const player& currentPlayer, const string& fileName)
 
 string ChooseMap()
 {
-	string configFile = "";
+	string configFile = "";			//tmp value configFile
 	while (true)
 	{
-		cout << "Welke map wil je inladen? ";
-		cin >> configFile;
-		configFile += ".json";
+		cout << "Welke map wil je inladen? (typ \"config\" voor de test) ";
+		cin >> configFile;														//vraag naar input om een map te kiezen
+		configFile += ".json";							// er wordt hier al ".json" voor je toegevoegd dus je hoeft alleen een naar op te geven
 		ifstream checkConf(configFile);
 		if (checkConf.good())
 		{
 			break;
 		}
-		else
-		{
+		else {							//als de filenaam niet bestaat dan geeft hij dit terug
 			cout << "Deze file bestaat niet, probeer het opnieuw\n\n";
 		}
 	}
-	system("CLS");
+	system("CLS");						//leeg scherm
 	return configFile;
 }
 
@@ -168,13 +167,13 @@ void PrintLeaderboard(const string& fileName)
 
 void WumpusRoom(player& currentPlayer)
 {
-	if (currentPlayer.currentRoom.wumpus) {
+	if (currentPlayer.currentRoom.wumpus) {							//als de kamer waar je in staat gelijk is met de kamer van de wumpus dan ga je naar de gamever functie
 		cout << "Je bent tegen de Wumpus aangelopen...hij is boos en heeft je de grond in geslagen\n\n";
-		GameOver(currentPlayer, false);
+		GameOver(currentPlayer, false);								//zie functie voor functionaliteit
 		return;
 	}
 	bool found = false;
-	for (unsigned int x = 0; x != 3; x++) {
+	for (unsigned int x = 0; x != 3; x++) {							//dit is een nested for-loop die checkt in alle kamer door in de adjacentRoom van elke kamer te kijken of de wumpus daarin zit
 		int adjacentRoomIndexX = rooms[currentPlayer.currentRoom.adjacentRooms[x]].roomID;
 		for (unsigned int y = 0; y != 3; y++) {
 			int adjacentRoomIndexY = rooms[adjacentRoomIndexX].adjacentRooms[y];
@@ -183,7 +182,7 @@ void WumpusRoom(player& currentPlayer)
 				break;
 			}
 		}
-		if (rooms[adjacentRoomIndexX].wumpus) {
+		if (rooms[adjacentRoomIndexX].wumpus) {							//als de wumpus binnen de range van 2 kamer is  krijg je de melding dat je de wumpus ruikt
 			found = true;
 		}
 		if (found) { cout << "Je ruikt de wumpus...\n"; break; }
@@ -203,7 +202,7 @@ void PlayerShoot(player& currentPlayer)
 		cin >> numberRooms;
 	}
 
-	for(unsigned int x = numberRooms; x != 0; x--)
+	for (unsigned int x = numberRooms; x != 0; x--)
 	{
 		cout << "kamer: ";
 		cin >> whichRoom;
@@ -238,25 +237,25 @@ void RoomSelection(player& currentPlayer)
 
 	while (true)
 	{
-		cout << "De gangen lijden naar " << (currentPlayer.currentRoom.adjacentRooms[0] + 1)
-			<< " " << (currentPlayer.currentRoom.adjacentRooms[1] + 1) << " " << (currentPlayer.currentRoom.adjacentRooms[2] + 1) << endl;
+		cout << "De gangen lijden naar " << (currentPlayer.currentRoom.adjacentRooms[0] + 1)				
+			<< " " << (currentPlayer.currentRoom.adjacentRooms[1] + 1) << " " << (currentPlayer.currentRoom.adjacentRooms[2] + 1) << endl;		//je krijgt hier de aanliggende kamers te zien
 
 		cout << "Naar welke gang? ";
 
-		cin >> whichRoom;
+		cin >> whichRoom;						//de vraag naar input waar je één van de hiervoor genoemde kamers moet kiezen
 		whichRoom--;
 
 		cout << '\n';
 
-		if (cin.fail())
+		if (cin.fail())							//hier krijg je een check over je input heen of je wel een gelige invoer geeft (denk aan letter ipv cijfers)
 		{
 			cin.clear();
 			cin.ignore(numeric_limits<streamsize>::max(), '\n');
-			cout << "Input is ongeldig. Moet een nummer zijn. Probeer het nog een keer\n\n";
+			cout << "Input is ongeldig. Moet een nummer zijn. Probeer het nog een keer\n\n";			
 			continue;
 		}
 
-		if (whichRoom == currentPlayer.currentRoom.adjacentRooms[0] ||
+		if (whichRoom == currentPlayer.currentRoom.adjacentRooms[0] ||				//hier wordt er nog even gekeken of je gekozen kamer wel hetzelfde is aan een van de aangegeven kamers
 			whichRoom == currentPlayer.currentRoom.adjacentRooms[1] ||
 			whichRoom == currentPlayer.currentRoom.adjacentRooms[2])
 		{
@@ -266,38 +265,35 @@ void RoomSelection(player& currentPlayer)
 		cout << "Input is ongeldig, Probeer het nog een keer.\n\n";
 	}
 
-	currentPlayer.currentRoom = rooms[whichRoom];
+	currentPlayer.currentRoom = rooms[whichRoom];						//hier wordt je dan ook daadwerkrelijk naar die gekozen kamer gezet
 
-	EnterRoom(currentPlayer);
+	EnterRoom(currentPlayer);											//zie functie voor functionaliteit
 }
 
 void PlayerInteraction(player& currentPlayer)
 {
-	char playerChoose = '1';	//Temp value A
+	string playerChoose = "value";				//Temp value A
 
-	while (playerChoose != 'S' && playerChoose != 'M')
+	while (playerChoose != "S" && playerChoose != "M")			//een while-loop die checkt of de invoer niet "S" of "M" is want dan moet je opnieuwe de keuze krijgen
 	{
 		cout << "Je zit in kamer " << (currentPlayer.currentRoom.roomID + 1) << endl;
 		cout << "Wil je schieten of lopen (S/M) ";
 
-		cin >> playerChoose;
+		cin >> playerChoose;									//de vraag naar invoer om een keuze tussen schieten of bewegen te maken
 
 		cout << '\n';
 	}
 	currentPlayer.turns++;
 
-	switch (playerChoose)
-	{
-	case 'S':
-		PlayerShoot(currentPlayer);
-		break;
-	case 'M':
-		RoomSelection(currentPlayer);
-		break;
+	if (playerChoose == "S") {					//als je "S" ingeeft dan heb je de mogelijkheid om te schieten
+		PlayerShoot(currentPlayer);				//zie functie voor functionaliteit
+	}
+	if (playerChoose == "M") {					//als je "M" ingeeft dan krijg je de mogelijkheid om van kamer te verplaatsen
+		RoomSelection(currentPlayer);			//zie functie voor functionaliteit
 	}
 }
 
-void Intro()
+void Intro()			//dit is de intro tekst
 {
 	cout << "Welkom bij 'Hunt the Wumpus'! " << endl << endl;
 
@@ -329,14 +325,13 @@ void Intro()
 	cout << "De game is afgelopen als je de Wumpus weet te raken met je pijlen. Veel succes!" << endl << endl;
 }
 
-void RandomBatRoom(player& currentPlayer)
+void RandomBatRoom(player& currentPlayer)			//je wordt hierdoor naar een random kamer gezet door de "bats"
 {
 	srand((unsigned)time(NULL));	//maak seed aan gebasseerd op runtime zodat deze uniek is
 
 	int randomRoom = rand() % rooms.size();
-	while (randomRoom == currentPlayer.currentRoom.roomID) {
-		//kies een random integer todat deze integer niet gelijk staat aan de kamer waar de player al in zit
-		randomRoom = rand() % rooms.size();
+	while (randomRoom == currentPlayer.currentRoom.roomID) {			//kies een random integer todat deze integer niet gelijk staat aan de kamer waar de player al in zit
+		randomRoom = rand() % rooms.size();			
 	}
 
 	currentPlayer.currentRoom = rooms[randomRoom];	//verander de current room van de player naar de nieuwe random room
@@ -346,14 +341,12 @@ void RandomBatRoom(player& currentPlayer)
 
 void EnterRoom(player& currentPlayer)
 {
-	if (currentPlayer.currentRoom.bat)
-	{
-		//als bat = true bij de kamer waar de player in zit, roep dan RandomBatRoom() aan
+	if (currentPlayer.currentRoom.bat)		//als bat = true bij de kamer waar de player in zit, roep dan RandomBatRoom() aan
+	{	
 		RandomBatRoom(currentPlayer);
 	}
-	else if (currentPlayer.currentRoom.pit)
+	else if (currentPlayer.currentRoom.pit)				//als pit = true bij huidige kamer roep dan GameOver() aan
 	{
-		//als pit = true bij huidige kamer roep dan GameOver() aan
 		cout << "Je bent in een bodemloze put gevallen...\n\n";
 		GameOver(currentPlayer, false);
 		return;
@@ -362,36 +355,19 @@ void EnterRoom(player& currentPlayer)
 	WumpusRoom(currentPlayer);
 }
 
-int RandomRoom()
-{
-	//niet in gebruik
-	srand((unsigned)time(NULL));
-	int randomRoom = rand() % 8 + 1;
-
-	for (unsigned int i = 0; i < 20; i++) {
-		if (rooms[randomRoom - 1].pit == true || rooms[randomRoom - 1].roomID == 1) {
-			randomRoom = rand() % 8 + 1;
-		}
-		else {
-			return randomRoom;
-		}
-	}
-}
-
 void GameOver(player& currentPlayer, const bool& gameWon)
 {
 	cout << "-------------------------------------------------------------\n\n";
 	currentPlayer.gameOver = true;
 	currentPlayer.gamesPlayed++;
 
-	if (!gameWon)
+	if (!gameWon)						//als je niet hebt gewonnen runt deze code
 	{
 		char option = '1';
 		cout << "Wil je weten waar de Wumpus zat? (Y) ";
 		cin >> option;
-		if (option == 'Y')
-		{
-			for (unsigned int x = 0; x != rooms.size(); x++)
+		if (option == 'Y'){								//dit is een vraag naar input waarbij "Y" je in dit geval de daadwerkelijke kamer van de wumpus geeft
+ 			for (unsigned int x = 0; x != rooms.size(); x++)		//met deze for-loop kijkt hij naar alle kamer en checkt hij in welke kamer de wumpus "true"
 			{
 				if (rooms[x].wumpus)
 				{
@@ -408,42 +384,36 @@ void GameOver(player& currentPlayer, const bool& gameWon)
 
 bool GameStart(player& currentPlayer, const string fileName)
 {
-	Intro();
-	while (!currentPlayer.gameOver)	 //gameloop
+	Intro();							//de intro tekst word gedisplayed
+	while (!currentPlayer.gameOver)	 //als je verliest wordt deze code ge-runt
 	{
-		PlayerInteraction(currentPlayer);
+		PlayerInteraction(currentPlayer);		//de keuze om te schieten of lopen
 	}
 
-	WritePlayerInfo(currentPlayer, fileName);
+	WritePlayerInfo(currentPlayer, fileName);		//alle info wordt naar het bestand geschreven (voor eventuele leaderboards)
 
-	char option = '1';
-	while (option != 'Y' && option != 'N')
+	char option = '1';			//tmp value option
+	while (option != 'Y' && option != 'N')		//while-loop die blijft lopen zolang je geen "Y" of "N" hebt ingegeven		
 	{
 		cout << "Wil je opnieuw spelen? (Y/N) ";
-		cin >> option;
+		cin >> option;					
 	}
 	switch (option)
 	{
-	case 'Y':
+	case 'Y':				//als je "Y" ingeeft begint je game opnieuw met standaardwaarden
 		cout << "\n----------------------------------------------------------" << endl << endl;
-		currentPlayer.currentRoom = rooms[0];
+		currentPlayer.currentRoom = rooms[0];			//standaardwaarde zodat je in kamer 1 begint
 		currentPlayer.gameOver = false;
 		return true;
-	case 'N':
+	case 'N':				//als je "N" ingeeft stopt het programma met runnen
 		return false;
 	}
 }
 
-<<<<<<< HEAD
-int startingGame() {
-	FillRoomVector(rooms, "config.json");
-	player player{ rooms[0] };
-	while (GameStart(player))
-=======
 bool MenuScreen(string& mapFile, player& currentPlayer)
 {
-	system("CLS");	//leeg console
-	char choice = '0';
+	system("CLS");								//leeg console
+	int choice = 0;								//tmp-variable value
 
 	cout << "Huidige map: " << mapFile << endl;
 	cout << " _________________________________________________________________________________________________________" << endl;
@@ -457,38 +427,37 @@ bool MenuScreen(string& mapFile, player& currentPlayer)
 	cout << "|   |_________________| |_________________| |_________________| |_________________| |_________________|   |" << endl;
 	cout << "|_________________________________________________________________________________________________________|" << endl;
 
-	cin >> choice;
+	cin >> choice;							//vraag naar input
 
 	system("CLS");
 
 	switch (choice)
->>>>>>> 0096aeab742ed34976efbd00acaf81e943eb6fd0
 	{
-	case '1':
-		if (mapFile.empty())
+	case 1:									//als je "1" ingeeft dan start hij de game op met beginnende waardes
+		if (mapFile.empty())				//als er nog geen map is gekozen dan laat het je bij deze kiezen
 		{
 			mapFile = ChooseMap();
 		}
-		ReadConfigInfo(rooms, mapFile, currentPlayer);
-		currentPlayer.currentRoom = rooms[0];
-		currentPlayer.gameOver = false;
+		ReadConfigInfo(rooms, mapFile, currentPlayer);		
+		currentPlayer.currentRoom = rooms[0];			//standaardwaarde die je in kamer 0 laat spawnen
+		currentPlayer.gameOver = false;					
 
-		while (GameStart(currentPlayer, mapFile)) {}
+		while (GameStart(currentPlayer, mapFile)) {}	
 		return true;
-	case '2':
+	case 2:									//als je "2" ingeeft krijg jje het leaderboard te zien
 		if (mapFile.empty())
 		{
-			mapFile = ChooseMap();
+			mapFile = ChooseMap();			//ja krijgt de keuze van welke map je de leaderboards wil zien
 		}
-		PrintLeaderboard(mapFile);
+		PrintLeaderboard(mapFile);			//hier worden de leaderboards ook daadwerkelijk naar het scherm geprint zie deze functie
 		return true;
-	case '3':
+	case 3:									//als je "3" ingeeft dan gaat hij een AI-speler in de map zetten die de game zelf kan uitspelen
 		cout << "AI\n";
 		return true;
-	case '4':
-		return false;	//quit
-	case '5':
-		mapFile = ChooseMap();
+	case 4:
+		return false;						//als je "4" ingeeft dan sluit je het spel af
+	case 5:
+		mapFile = ChooseMap();				//als je "5" ingeeft dan moet je de map kiezn waarin je wil spelen
 		return true;
 	}
 	return true;
@@ -498,40 +467,6 @@ int main()
 {
 	player player;
 	string mapFile;
-	while(MenuScreen(mapFile, player));
-	return 0;
-}
-
-void FirstScreen() {
-	string choice;
-	cout << " ___________________________________________________________________" << endl;
-	cout << "|                         HUNT THE WUMPUS                           |" << endl;
-	cout << "|                                                                   |" << endl;
-	cout << "|                                                                   |" << endl;
-	cout << "|                         Kies een optie(1, 2, 3):                  |" << endl;
-	cout << "|    _________________   ___________________   _________________    |" << endl;
-	cout << "|   |                 | |                   | |                 |   |" << endl;
-	cout << "|   | 1. spelen       | | 2. Leaderboards   | | 3.      AI      |   |" << endl;
-	cout << "|   |_________________| |___________________| |_________________|   |" << endl;
-	cout << "|___________________________________________________________________|" << endl;
-	cin >> choice;
-	if (choice == "1") {
-		startingGame();
-	}
-	else if (choice == "2") {
-		cout << "Hier komt het leaderboard" << endl;
-	}
-	else if (choice == "3") {
-		cout << "Hier komt de aanroep van de AI" << endl;
-	}
-	else {
-		cout << "Je hebt een fout invoer gegeven!";
-		exit(0);
-	}
-}
-
-int main()
-{
-	FirstScreen();
+	while (MenuScreen(mapFile, player));
 	return 0;
 }
