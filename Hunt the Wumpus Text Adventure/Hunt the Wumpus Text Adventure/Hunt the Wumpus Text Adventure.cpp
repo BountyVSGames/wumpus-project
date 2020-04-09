@@ -183,19 +183,18 @@ void PrintLineToConsole(string print)
 
 void ReadConfigInfo(vector<room>& roomVec, const string& fileName, playerstruct& currentPlayer)
 {
-	ifstream file(fileName);		//open file
-	IStreamWrapper wrapper(file);		//apply wrapper rapidjson
+	ifstream file(fileName);		//openen van file
+	IStreamWrapper wrapper(file);		//toevoegen wrapper van library json
 
-	Document configFile;				
-	configFile.ParseStream(wrapper);	//parse
+	Document configFile;
+	configFile.ParseStream(wrapper);
 
 	vector<int> adjacentRoomsConf;
-	for (unsigned int x = 0; x != configFile["Rooms"].Size(); x++)
+	for (unsigned int x = 0; x != configFile["Rooms"].Size(); x++)	//for-loop over de veschillende kamers
 	{
 		for (Value& y : configFile["Rooms"][x]["Adjacent Rooms"].GetArray())
 		{
-			//maak vector aan met values van json file
-			adjacentRoomsConf.push_back(y.GetInt());
+			adjacentRoomsConf.push_back(y.GetInt());	//maak vector aan met values van json file
 		}
 		roomVec.push_back({									//maak nieuwe room object met json values en zet die in de vector
 			configFile["Rooms"][x]["Room ID"].GetInt(),		//roomID
@@ -207,14 +206,14 @@ void ReadConfigInfo(vector<room>& roomVec, const string& fileName, playerstruct&
 		adjacentRoomsConf = {};
 	}
 	cout << fileName << " is succesvol ingeladen!\n\n";
-	if (configFile["Players"].Empty())
+	if (configFile["Players"].Empty())		//kijken of speler al bestaat
 	{
-		cout << "Er zijn nog geen bestaande spelers op " << fileName << "\n\n";
+		cout << "Er zijn nog geen bestaande spelers op" << fileName << "\n\n";
 	}
 	else
 	{
 		cout << "Spelers op " << fileName << ": ";
-		for (unsigned int x = 0; x != (configFile["Players"].Size() - 1); x++)
+		for (unsigned int x = 0; x != (configFile["Players"].Size() - 1); x++)		//for-loop om elke spelernaam uit te printen
 		{
 			cout << configFile["Players"][x]["Player Name"].GetString() << ", ";
 		}
@@ -222,7 +221,7 @@ void ReadConfigInfo(vector<room>& roomVec, const string& fileName, playerstruct&
 	}
 
 	cout << "Geef je speler een naam van maximaal 20 characters, of kies een player: ";
-	while (currentPlayer.playerName.empty() || currentPlayer.playerName.size() > 20)
+	while (currentPlayer.playerName.empty() || currentPlayer.playerName.size() > 20)		//while-loop om een geldige playernaam te geven.
 	{
 		getline(cin, currentPlayer.playerName);
 	}
@@ -245,14 +244,14 @@ void ReadConfigInfo(vector<room>& roomVec, const string& fileName, playerstruct&
 
 void WritePlayerInfo(const playerstruct& currentPlayer, const string& fileName)
 {
-	//open filestream voor read en write
-	ifstream inFile(fileName);			//input stream
-	IStreamWrapper inWrapper(inFile);		//wrapper
+	//lezen van de jsonfile
+	ifstream inFile(fileName);
+	IStreamWrapper inWrapper(inFile);
 
 	Document configFile, configFileAppend;
-	configFile.ParseStream(inWrapper);	//parse file
+	configFile.ParseStream(inWrapper);
 
-	configFile.IsObject();
+	configFile.IsObject();		//maakt configfile een object
 	inFile.close();
 
 	for (unsigned int x = 0; x != configFile["Players"].Size(); x++)
@@ -260,13 +259,13 @@ void WritePlayerInfo(const playerstruct& currentPlayer, const string& fileName)
 		//check of de opgegeven naam al bestaat
 		if (currentPlayer.playerName == configFile["Players"][x]["Player Name"].GetString())
 		{
-			//remove
+			//verwijderen van naam als ie al bestaat
 			configFile["Players"].Erase(configFile["Players"].Begin() + x);
 			break;
 		}
 	}
 
-	//add
+	//toevoegen van naam
 
 	configFileAppend.SetObject();
 
@@ -287,11 +286,12 @@ void WritePlayerInfo(const playerstruct& currentPlayer, const string& fileName)
 	configFile["Players"].PushBack(playerObject, configFileAppend.GetAllocator());
 
 
-	ofstream outFile(fileName);				//output stream
-	OStreamWrapper outWrapper(outFile);		//wrapper
+	//opent file voor output
+	ofstream outFile(fileName);
+	OStreamWrapper outWrapper(outFile);
 
 	Writer<OStreamWrapper> writer(outWrapper);
-	configFile.Accept(writer);
+	configFile.Accept(writer);		//schrijft json file over het nieuwe object
 
 	outFile.close();
 }
@@ -382,32 +382,32 @@ void PlayerShoot(playerstruct& currentPlayer)
 
 	while (numberRooms < 1 || numberRooms > currentPlayer.arrows) {
 		PrintLineToConsole("Hoeveel tunnels wil je doorschieten (1 tot " + to_string(currentPlayer.arrows) + ")?");
-		cin >> numberRooms;
+		cin >> numberRooms;				//De vraag hoeveel kamers je wil beschieten
 	}
 
-	for (unsigned int x = numberRooms; x != 0; x--)
+	for (unsigned int x = numberRooms; x != 0; x--)		//for-loop om de kamers die je hebt gekozen door te kijken
 	{
 		PrintLineToConsole("Welke kamer: ");
-		cin >> whichRoom;
+		cin >> whichRoom;		//kiezen van een kamer
 		whichRoom--;
 
-		if (whichRoom < 0 || whichRoom >= rooms.size()) {
+		if (whichRoom < 0 || whichRoom >= rooms.size()) {		//kijken of de kamer niet bestaat
 			cout << "Die kamer bestaat niet\n";
 			x++;
 			continue;
 		}
-		if (rooms[whichRoom].wumpus)
+		if (rooms[whichRoom].wumpus)	//kijken of de wumpus in de kamer zit
 		{
 			PrintLineToConsole("Gefeliciteerd je hebt de Wumpus verslagen!\n\n");
-			GameOver(currentPlayer, true);
+			GameOver(currentPlayer, true);				//zie functie voor functionaliteit
 			return;
 		}
 		PrintLineToConsole("Je hebt gemist en bent nu een pijl kwijt.\n");
 		currentPlayer.arrows -= 1;
-		if (currentPlayer.arrows == 0)
+		if (currentPlayer.arrows == 0)		//kijken of je nog pijlen hebt om mee te schieten
 		{
 			PrintLineToConsole("Je pijlen zijn op, je hebt verloren.\n\n");
-			GameOver(currentPlayer, false);
+			GameOver(currentPlayer, false);				//zie functie voor functionaliteit
 			return;
 		}
 		PrintLineToConsole("Je hebt nog " + to_string(currentPlayer.arrows) + " pijlen over\n\n");
