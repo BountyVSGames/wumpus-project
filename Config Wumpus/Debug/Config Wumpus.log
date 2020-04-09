@@ -1,10 +1,1 @@
-﻿  Config Wumpus.cpp
-C:\Users\yoeyt\Documents\GitHub\wumpus-project\Config Wumpus\Config Wumpus.cpp(1,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-C:\Users\yoeyt\Documents\GitHub\wumpus-project\Config Wumpus\Room.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-C:\Users\yoeyt\Documents\GitHub\wumpus-project\Config Wumpus\Room.h(9,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-C:\Users\yoeyt\Documents\GitHub\wumpus-project\Config Wumpus\Room.h(10,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-C:\Users\yoeyt\Documents\GitHub\wumpus-project\Config Wumpus\Config Wumpus.cpp(233,20): warning C4305: 'initializing': truncation from 'int' to 'char'
-C:\Users\yoeyt\Documents\GitHub\wumpus-project\Config Wumpus\Config Wumpus.cpp(233,16): warning C4309: 'initializing': truncation of constant value
-C:\Users\yoeyt\Documents\GitHub\wumpus-project\Config Wumpus\Config Wumpus.cpp(301,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\yoeyt\Documents\GitHub\wumpus-project\Config Wumpus\Config Wumpus.cpp(377,20): warning C4018: '<': signed/unsigned mismatch
-  Config Wumpus.vcxproj -> C:\Users\yoeyt\Documents\GitHub\wumpus-project\Config Wumpus\Debug\Config Wumpus.exe
+﻿  Config Wumpus.vcxproj -> C:\Users\Jort\Documents\wumpus-project\Config Wumpus\Debug\Config Wumpus.exe

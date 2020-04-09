@@ -31,7 +31,7 @@ void ReadConfigInfo(vector<room>& roomVec, const string& fileName, player& curre
 	cout << fileName << " is succesvol ingeladen!\n\n";
 	if (configFile["Players"].Empty())
 	{
-		cout << "Er zijn nog geen bestaande spelers op" << fileName << "\n\n";
+		cout << "Er zijn nog geen bestaande spelers op: " << fileName << "\n\n";
 	}
 	else
 	{
@@ -123,7 +123,7 @@ string ChooseMap()
 	string configFile = "";			//tmp value configFile
 	while (true)
 	{
-		cout << "Welke map wil je inladen? (typ \"config\" voor de test) ";
+		cout << "Welke map wil je inladen? (typ \"config\" voor de test), test,  ";
 		cin >> configFile;														//vraag naar input om een map te kiezen
 		configFile += ".json";							// er wordt hier al ".json" voor je toegevoegd dus je hoeft alleen een naar op te geven
 		ifstream checkConf(configFile);
