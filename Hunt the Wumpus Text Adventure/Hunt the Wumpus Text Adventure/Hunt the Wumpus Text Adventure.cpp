@@ -312,15 +312,16 @@ void WritePlayerInfo(const playerstruct& currentPlayer, const string& fileName)
 
 string ChooseMap(playerstruct& currentPlayer)
 {
+	cout << "Instructies voor verschillende mappen: " << endl << endl;
+	cout << "Je kan een map zelf laten generen voor de liefhebber." << endl;
+	cout << "U heeft 2 mappen aangeleverd gekregen(als het goed is)." << endl;
+	cout << "In de \"Config Wumpus\" map staat een .exe bestand. Als je dit runt kan je zelf een kamer structuur creeren" << endl;
+	cout << "Zorg dat het nieuwe bestand (dat eindigt op .json) in dezelfde map staat als het \"Hunt...Adventure.exe\" bestand." << endl;
+	cout << "Als je deze dan wil gebruiken hoef je alleen de naam van het nieuwe bestand in te geven en spelen maar!" << endl << endl << endl;
+	
 	string configFile = "";
 	while (true)
 	{
-		cout << "Instructies voor verschillende mappen: " << endl << endl;
-		cout << "Je kan een map zelf laten generen voor de liefhebber." << endl;
-		cout << "U heeft 2 mappen aangeleverd gekregen(als het goed is)." << endl;
-		cout << "In de \"Config Wumpus\" map staat een .exe bestand. Als je dit runt kan je zelf een kamer structuur creeren" << endl;
-		cout << "Zorg dat het nieuwe bestand (dat eindigt op .json) in dezelfde map staat als het \"Hunt...Adventure.exe\" bestand." << endl;
-		cout << "Als je deze dan wil gebruiken hoef je alleen de naam van het nieuwe bestand in te geven en spelen maar!" << endl << endl << endl;
 		cout << "Welke map wil je inladen? ";
 
 		cin >> configFile;								//vraag naar input om een map te kiezen
@@ -450,7 +451,7 @@ void RoomSelection(playerstruct& currentPlayer)
 
 		PrintLineToConsole("Naar welke gang? ");
 
-		cin >> whichRoom;						//de vraag naar input waar je één van de hiervoor genoemde kamers moet kiezen
+		cin >> whichRoom;						//de vraag naar input waar je Ã©Ã©n van de hiervoor genoemde kamers moet kiezen
 		whichRoom--;
 
 		PrintLineToConsole("\n");
