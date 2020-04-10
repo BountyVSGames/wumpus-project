@@ -10,6 +10,7 @@
 #include <string>
 #include <time.h>
 #include <thread>
+#include <cmath>
 
 #include "rapidjson-master/include/rapidjson/istreamwrapper.h"
 #include "rapidjson-master/include/rapidjson/ostreamwrapper.h"
@@ -45,7 +46,7 @@ struct aiplayer
 	vector<room> roomsVisited = {};
 	vector<room> batRooms = {};
 	vector<room> pitRooms = {};
-	vector<room> possibleWumpusRooms = {};
+	vector<int> possibleWumpusRooms = {};
 };
 
 bool GameStart(playerstruct& currentRoom);

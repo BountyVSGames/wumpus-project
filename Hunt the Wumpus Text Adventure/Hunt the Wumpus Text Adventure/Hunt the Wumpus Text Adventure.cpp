@@ -19,7 +19,7 @@ vector<int> numpadKeyInput =
 	0x33,
 	0x34,
 	0x35,
-	0x35,
+	0x36,
 	0x37,
 	0x38,
 	0x39
@@ -46,36 +46,23 @@ bool IsIntInVectorRoom(vector<room> vector, int value)
 vector<int> IntDevider(int number)
 {
 	vector<int> returnValue = {};
+	string value = to_string(number);
 
-	int index = 0;
-
-	while (number > 0)
+	for (int i = 0; i < value.size(); i++)
 	{
-		int digit = number % 10;
-		number /= 10;
-
-		returnValue.push_back(digit);
-
-		index++;
-	}
-
-	if (returnValue.size() == 2)
-	{
-		int tempValue = returnValue[1];
-		returnValue[1] = returnValue[0];
-		returnValue[0] = tempValue;
+		returnValue.push_back(value[i] - '0');
 	}
 
 	return returnValue;
 }
 
-void PlayerThread()
-{
-	player.currentRoom = rooms[15];
-	string mapFile;
-
-	while (MenuScreen(mapFile, player));
-}
+//void PlayerThread()
+//{
+//	player.currentRoom = rooms[19];
+//	string mapFile;
+//
+//	while (MenuScreen(mapFile, player));
+//}
 void AIThread()
 {
 	aiplayer aiPlayer;
@@ -85,7 +72,7 @@ void AIThread()
 		unique_lock<mutex> lock(mx);
 		currentLineReady.wait(lock);
 
-		if (currentLine.find("schieten of lopen") == 7)
+		if (currentLine.find("Wil je schieten of lopen") == 0)
 		{
 			if (aiPlayer.roomsVisited.size() == 0 || !(IsIntInVectorRoom(aiPlayer.roomsVisited, player.currentRoom.roomID)))
 			{
@@ -98,6 +85,8 @@ void AIThread()
 				AIInputPressDown(0x53); //S
 				AIInputPressDown(0x0D); //Enter
 
+				Sleep(1000);
+
 				AIInputPressUp(0x10); //Shift
 				AIInputPressUp(0x53); //S
 				AIInputPressUp(0x0D); //Enter
@@ -107,6 +96,8 @@ void AIThread()
 				AIInputPressDown(0x10); //Shift
 				AIInputPressDown(0x4D); //M
 				AIInputPressDown(0x0D); //Enter
+
+				Sleep(1000);
 
 				AIInputPressUp(0x10); //Shift
 				AIInputPressUp(0x4D); //M
@@ -122,17 +113,14 @@ void AIThread()
 			{
 				for (int j = 0; j < aiPlayer.roomsVisited.size(); j++)
 				{
-					if (aiPlayer.roomsVisited[j].roomID != player.currentRoom.adjacentRooms[i] && j == (aiPlayer.roomsVisited.size() - 1))
+					if (player.currentRoom.adjacentRooms[i] == aiPlayer.roomsVisited[j].roomID)
 					{
-						notVisitedRoomId = player.currentRoom.adjacentRooms[i] + 1;
-						notVisitedRoom = true;
-
+						notVisitedRoom = false;
 						break;
 					}
-					else if(aiPlayer.roomsVisited[j].roomID == player.currentRoom.adjacentRooms[i] + 1)
-					{
-						break;
-					}
+					
+					notVisitedRoom = true;
+					notVisitedRoomId = player.currentRoom.adjacentRooms[i];
 				}
 
 				if (notVisitedRoom)
@@ -141,46 +129,107 @@ void AIThread()
 				}
 			}
 
-			vector<int> splittedRoomID = IntDevider(notVisitedRoomId);
+			Sleep(1000);
 
-			if (splittedRoomID.size() == 1)
+			vector<int> splittedRoomID = IntDevider(notVisitedRoomId + 1);
+
+			for (int i = 0; i < splittedRoomID.size(); i++)
 			{
-				AIInputPressDown(numpadKeyInput[splittedRoomID[0]]);
-				AIInputPressDown(0x0D);
-
-				AIInputPressUp(numpadKeyInput[splittedRoomID[0]]);
-				AIInputPressUp(0x0D);
+				AIInputPressDown(numpadKeyInput[splittedRoomID[i]]);
+				Sleep(500);
+				AIInputPressUp(numpadKeyInput[splittedRoomID[i]]);
 			}
-			else if (splittedRoomID.size() > 1)
-			{
-				for (int i = 0; i < splittedRoomID.size(); i++)
-				{
-					AIInputPressDown(numpadKeyInput[splittedRoomID[i]]);
-				}
-				AIInputPressDown(0x0D);
 
-				for (int i = 0; i < splittedRoomID.size(); i++)
-				{
-					AIInputPressUp(numpadKeyInput[splittedRoomID[i]]);
-				}
+			AIInputPressDown(0x0D);
+			Sleep(500);
+			AIInputPressUp(0x0D);
 
-				AIInputPressUp(0x0D);
-			}
+			splittedRoomID = {};
 		}
-		else if (currentLine.find("Je bent tegen de Wumpus aangelopen" == 0))
-		{
-			cout << (currentLine.find("Je bent tegen de Wumpus aangelopen") == 0);
-			break;
-		}
-		else if (currentLine.find("Wil je weten waar de" == 0))
+		else if (currentLine.find("Wil je weten waar de") == 0)
 		{
 			AIInputPressDown(0x10);
-			AIInputPressDown('y');
+			AIInputPressDown(0x4E); //N
 			AIInputPressDown(0x0D);
 
+			Sleep(1000);
+
 			AIInputPressUp(0x10);
-			AIInputPressUp('y');
+			AIInputPressUp(0x4E); //N
 			AIInputPressUp(0x0D);
+		}
+		else if (currentLine.find("Wil je opnieuw spelen?") == 0)
+		{
+			AIInputPressDown(0x10);
+			AIInputPressDown(0x59); //Y
+			AIInputPressDown(0x0D);
+
+			Sleep(1000);
+
+			AIInputPressUp(0x10);
+			AIInputPressUp(0x59); //Y
+			AIInputPressUp(0x0D);
+		}
+		else if (currentLine.find("Je bent in een bodemloze put gevallen") == 0)
+		{
+			cout << "TEST";
+			aiPlayer.pitRooms.push_back(player.currentRoom);
+		}
+		else if (currentLine.find("Je ruikt de wumpus") == 0)
+		{
+			vector<int> roomsToAdd = {};
+
+			for (int i = 0; i < player.currentRoom.adjacentRooms.size(); i++)
+			{
+				for (int j = 0; j < rooms[player.currentRoom.adjacentRooms[i]].adjacentRooms.size(); j++)
+				{
+					if (rooms[player.currentRoom.adjacentRooms[i]].adjacentRooms[j] != player.currentRoom.adjacentRooms[i])
+					{
+						roomsToAdd.push_back(rooms[player.currentRoom.adjacentRooms[i]].adjacentRooms[j]);
+					}
+				}
+
+				roomsToAdd.push_back(player.currentRoom.adjacentRooms[i]);
+			}
+			for (int i = 0; i < roomsToAdd.size() - 1; i++)
+			{
+				for (int j = i + 1; j < roomsToAdd.size(); j++)
+				{
+					if (roomsToAdd[i] == roomsToAdd[j])
+					{
+						roomsToAdd.erase(roomsToAdd.begin() + j);
+					}
+				}
+			}
+
+			aiPlayer.possibleWumpusRooms = roomsToAdd;
+		}
+		else if (currentLine.find("Hoeveel tunnels wil je doorschieten") == 0)
+		{	
+			AIInputPressDown(numpadKeyInput[5]);
+			AIInputPressDown(0x0D);
+		}
+		else if (currentLine.find("Welke kamer:") == 0)
+		{
+			vector<int> splittedRoomID = IntDevider(aiPlayer.possibleWumpusRooms[0]);
+
+			for (int i = 0; i < splittedRoomID.size(); i++)
+			{
+				AIInputPressDown(numpadKeyInput[splittedRoomID[i]]);
+			}
+			AIInputPressDown(0x0D);
+
+			Sleep(1000);
+
+			for (int i = 0; i < splittedRoomID.size(); i++)
+			{
+				AIInputPressUp(numpadKeyInput[splittedRoomID[i]]);
+			}
+			AIInputPressUp(0x0D);
+		}
+		else if (currentLine.find("Je hebt gemist en bent nu een pijl kwijt") == 0)
+		{
+			aiPlayer.possibleWumpusRooms.erase(aiPlayer.possibleWumpusRooms.begin());
 		}
 	}
 }
@@ -602,6 +651,7 @@ bool GameStart(playerstruct& currentPlayer, const string fileName)
 	case 'Y':				//als je "Y" ingeeft begint je game opnieuw met standaardwaarden
 		PrintLineToConsole("----------------------------------------------------------\n\n");
 		currentPlayer.currentRoom = rooms[0];			//standaardwaarde zodat je in kamer 1 begint
+		currentPlayer.arrows = 5;
 		currentPlayer.gameOver = false;
 		return true;
 	case 'N':				//als je "N" ingeeft stopt het programma met runnen
@@ -685,7 +735,7 @@ bool MenuScreen(string& mapFile, playerstruct& currentPlayer)
 int main()
 {
 	string mapFile;
-	while (MenuScreen(mapFile, player));
+	while (MenuScreen(mapFile, player)) {};
 
 	return 0;
 }

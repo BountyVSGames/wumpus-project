@@ -5,8 +5,8 @@
 
 void AIPrepareInput();
 
-void AIInputPressDown(char inputKey);
-void AIInputPressUp(char inputKey);
+void AIInputPressDown(int inputKey);
+void AIInputPressUp(int inputKey);
 
 void AIMove(room currentRoom);
 void AIShoot(room currentRoom);

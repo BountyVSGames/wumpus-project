@@ -18,8 +18,10 @@ void AIPrepareInput()
 	ip.ki.wScan = 0;
 	ip.ki.time = 0;
 	ip.ki.dwExtraInfo = 0;
+
+	Sleep(500);
 }
-void AIInputPressDown(char inputKey)
+void AIInputPressDown(int inputKey)
 {
 	AIPrepareInput();
 
@@ -27,7 +29,7 @@ void AIInputPressDown(char inputKey)
 	ip.ki.dwFlags = 0; // 0 for key press
 	SendInput(1, &ip, sizeof(INPUT));
 }
-void AIInputPressUp(char inputKey)
+void AIInputPressUp(int inputKey)
 {
 	AIPrepareInput();
 
