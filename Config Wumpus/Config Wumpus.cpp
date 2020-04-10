@@ -226,8 +226,8 @@ int main()
 {
 	string levelName;
 
-	int roomBat[2] = { 0,0 };
-	int roomPit[2] = { 0,0 };
+	vector<int> roomBat = { 0, 0 };
+	vector<int> roomPit = { 0, 0 };
 	int roomWumpus = 0;
 
 	char option = '-1';
@@ -238,8 +238,8 @@ int main()
 	}
 	if (option == 'R') {
 		int roomOption = 0;
-		cout << "Hoeveel rooms? (Geef een even getal van 6 t/m 50) ";
-		while (roomOption < 6 || roomOption > 50 || (roomOption % 2) != 0)
+		cout << "Hoeveel rooms? (Geef een even getal van 6 t/m 30) ";
+		while (roomOption < 6 || roomOption > 30 || (roomOption % 2) != 0)
 		{
 			cin >> roomOption;
 		}
@@ -259,44 +259,53 @@ int main()
 	cout << "\nInsert level name: ";
 	cin >> levelName;
 
-	for (int i = 0; i < sizeof(roomBat); i++)
+	for (int i = 0; i != roomBat.size(); i++)
 	{
 		while (roomBat[i] == 0)
 		{
-			cout << "Insert room name that contains a bat (1-20): ";
+			cout << "Geef een nummer van een room waar je een bat in wilt plaatsen: ";
 			cin >> roomBat[i];
 
-			if (roomBat[i] < 1 || roomBat[i] > 20)
+			if (roomBat[i] < 1 || roomBat[i] > map.size())
 			{
-				cout << "Wrong value. Please insert a value between 1 and 20" << endl << endl;
+				cout << "Waarde klopt niet" << endl << endl;
 				roomBat[i] = 0;
 			}
 		}
 	}
-	for (int i = 0; i < sizeof(roomPit); i++)
+
+	map[roomBat[0] -1].bat = true;
+	map[roomBat[1] -1].bat = true;
+
+	for (int i = 0; i != roomPit.size(); i++)
 	{
 		while (roomPit[i] == 0)
 		{
-			cout << "Insert room name that contains a pit (1-20): ";
+			cout << "Geef een nummer van een room waar je een pit in wilt plaatsen: ";
 			cin >> roomPit[i];
 
 			if (map[roomPit[i] - 1].bat)
 			{
-				cout << "Room already has a bat. Can't contain both" << endl << endl;
+				cout << "Kamer heeft al vleermuizen, de kamer kan niet beide hebben" << endl << endl;
 			}
-			else if (roomPit[i] < 1 || roomPit[i] > 20)
+			else if (roomPit[i] < 1 || roomPit[i] > map.size())
 			{
-				cout << "Wrong value. Please insert a value between 1 and 20" << endl << endl;
+				cout << "Waarde klopt niet" << endl << endl;
 				roomPit[i] = 0;
 			}
 		}
 	}
 
+	map[roomPit[0] -1].pit = true;
+	map[roomPit[1] -1].pit = true;
+
 	while (roomWumpus == 0)
 	{
-		cout << "Insert room name that contains the wumpus (1-20): ";
+		cout << "Geef een nummer van een room waar je een wumpus in wilt plaatsen: ";
 		cin >> roomWumpus;
 	}
+
+	map[roomWumpus].wumpus;
 
 	for (int i = 0; i < map.size(); i++)
 	{
