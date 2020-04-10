@@ -236,10 +236,16 @@ int main()
 		cout << "Wil je een random map genereren of een template map gebruiken? (R/T) ";
 		cin >> option;
 	}
+
 	if (option == 'R') {
 		int roomOption = 0;
+<<<<<<< HEAD
+		cout << "Hoeveel rooms? (Geef een even getal van 10 t/m 30) ";
+		while (roomOption < 10 || roomOption > 30 || (roomOption % 2) != 0)
+=======
 		cout << "Hoeveel rooms? (Geef een even getal van 6 t/m 30) ";
 		while (roomOption < 6 || roomOption > 30 || (roomOption % 2) != 0)
+>>>>>>> cd86e5785f5e1979da20f60dad1c8f36a3851f0d
 		{
 			cin >> roomOption;
 		}
@@ -266,17 +272,28 @@ int main()
 			cout << "Geef een nummer van een room waar je een bat in wilt plaatsen: ";
 			cin >> roomBat[i];
 
+<<<<<<< HEAD
+			if (roomBat[i] < 1 || roomBat[i] > map.size() || map[roomBat[i] - 1].bat)
+			{
+				cout << "\nWaarde klopt niet of er was al iets in die kamer geplaatst" << endl << endl;
+=======
 			if (roomBat[i] < 1 || roomBat[i] > map.size())
 			{
 				cout << "Waarde klopt niet" << endl << endl;
+>>>>>>> cd86e5785f5e1979da20f60dad1c8f36a3851f0d
 				roomBat[i] = 0;
+				continue;
 			}
 		}
+		map[roomBat[i] - 1].bat = true;
 	}
 
+<<<<<<< HEAD
+=======
 	map[roomBat[0] -1].bat = true;
 	map[roomBat[1] -1].bat = true;
 
+>>>>>>> cd86e5785f5e1979da20f60dad1c8f36a3851f0d
 	for (int i = 0; i != roomPit.size(); i++)
 	{
 		while (roomPit[i] == 0)
@@ -284,6 +301,11 @@ int main()
 			cout << "Geef een nummer van een room waar je een pit in wilt plaatsen: ";
 			cin >> roomPit[i];
 
+<<<<<<< HEAD
+			if (roomPit[i] < 1 || roomPit[i] > map.size() || map[roomPit[i] - 1].pit || map[roomPit[i] - 1].bat)
+			{
+				cout << "\nWaarde klopt niet of er was al iets in die kamer geplaatst" << endl << endl;
+=======
 			if (map[roomPit[i] - 1].bat)
 			{
 				cout << "Kamer heeft al vleermuizen, de kamer kan niet beide hebben" << endl << endl;
@@ -291,9 +313,12 @@ int main()
 			else if (roomPit[i] < 1 || roomPit[i] > map.size())
 			{
 				cout << "Waarde klopt niet" << endl << endl;
+>>>>>>> cd86e5785f5e1979da20f60dad1c8f36a3851f0d
 				roomPit[i] = 0;
+				continue;
 			}
 		}
+		map[roomPit[i] - 1].pit = true;
 	}
 
 	map[roomPit[0] -1].pit = true;
@@ -303,7 +328,14 @@ int main()
 	{
 		cout << "Geef een nummer van een room waar je een wumpus in wilt plaatsen: ";
 		cin >> roomWumpus;
+		if (roomWumpus < 1 || roomWumpus > map.size() || map[roomWumpus - 1].pit || map[roomWumpus - 1].bat)
+		{
+			cout << "\nWaarde klopt niet of er was al iets in die kamer geplaatst\n\n";
+			roomWumpus = 0;
+			continue;
+		}
 	}
+	map[roomWumpus -1].wumpus = true;
 
 	map[roomWumpus].wumpus;
 

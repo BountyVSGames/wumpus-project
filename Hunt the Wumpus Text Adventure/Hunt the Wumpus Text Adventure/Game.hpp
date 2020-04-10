@@ -49,7 +49,7 @@ struct aiplayer
 	vector<int> possibleWumpusRooms = {};
 };
 
-bool GameStart(playerstruct& currentRoom);
+bool GameStart(playerstruct& currentPlayer, const string fileName);
 void GameOver(playerstruct& currentRoom, const bool& gameWon);
 
 void PlayerInteraction(playerstruct& currentRoom);

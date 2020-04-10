@@ -247,19 +247,18 @@ void PrintLineToConsole(string print)
 
 void ReadConfigInfo(vector<room>& roomVec, const string& fileName, playerstruct& currentPlayer)
 {
-	ifstream file(fileName);		//stream
-	IStreamWrapper wrapper(file);		//wrapper
+	ifstream file(fileName);
+	IStreamWrapper wrapper(file);	//toevoegen wrapper van library rapidjson
 
 	Document configFile;
-	configFile.ParseStream(wrapper);	//parse file
+	configFile.ParseStream(wrapper);
 
 	vector<int> adjacentRoomsConf;
 	for (unsigned int x = 0; x != configFile["Rooms"].Size(); x++)
 	{
 		for (Value& y : configFile["Rooms"][x]["Adjacent Rooms"].GetArray())
 		{
-			//maak vector aan met values van json file
-			adjacentRoomsConf.push_back(y.GetInt());
+			adjacentRoomsConf.push_back(y.GetInt());		//maak vector aan met values van json file
 		}
 		roomVec.push_back({									//maak nieuwe room object met json values en zet die in de vector
 			configFile["Rooms"][x]["Room ID"].GetInt(),		//roomID
@@ -271,12 +270,13 @@ void ReadConfigInfo(vector<room>& roomVec, const string& fileName, playerstruct&
 		adjacentRoomsConf = {};
 	}
 	cout << fileName << " is succesvol ingeladen!\n\n";
-	if (configFile["Players"].Empty())
+	if (configFile["Players"].Empty())		//kijken of speler al bestaat
 	{
 		cout << "Er zijn nog geen bestaande spelers op" << fileName << "\n\n";
 	}
 	else
 	{
+		//print elke player naam op map
 		cout << "Spelers op " << fileName << ": ";
 		for (unsigned int x = 0; x != (configFile["Players"].Size() - 1); x++)
 		{
@@ -309,14 +309,13 @@ void ReadConfigInfo(vector<room>& roomVec, const string& fileName, playerstruct&
 
 void WritePlayerInfo(const playerstruct& currentPlayer, const string& fileName)
 {
-	//open filestream voor read en write
-	ifstream inFile(fileName);			//input stream
-	IStreamWrapper inWrapper(inFile);		//wrapper
+	ifstream inFile(fileName);
+	IStreamWrapper inWrapper(inFile);	//toevoegen wrapper van library rapidjson
 
 	Document configFile, configFileAppend;
-	configFile.ParseStream(inWrapper);	//parse file
+	configFile.ParseStream(inWrapper);
 
-	configFile.IsObject();
+	configFile.IsObject();		//maakt configfile een object
 	inFile.close();
 
 	for (unsigned int x = 0; x != configFile["Players"].Size(); x++)
@@ -324,20 +323,20 @@ void WritePlayerInfo(const playerstruct& currentPlayer, const string& fileName)
 		//check of de opgegeven naam al bestaat
 		if (currentPlayer.playerName == configFile["Players"][x]["Player Name"].GetString())
 		{
-			//remove
+			//verwijderen van naam als hij al bestaat
 			configFile["Players"].Erase(configFile["Players"].Begin() + x);
 			break;
 		}
 	}
 
-	//add
+	//toevoegen van naam
 
 	configFileAppend.SetObject();
 
 	Value playerObject(kObjectType);	//maak nieuw object
 
 	Value name;
-	char buffer[20];														//char buffer
+	char buffer[20];
 	int len = sprintf_s(buffer, "%s", currentPlayer.playerName.c_str());	//converteer naar dynamische char pointer
 	name.SetString(buffer, len, configFileAppend.GetAllocator());			//maak name char pointer
 
@@ -351,56 +350,62 @@ void WritePlayerInfo(const playerstruct& currentPlayer, const string& fileName)
 	configFile["Players"].PushBack(playerObject, configFileAppend.GetAllocator());
 
 
-	ofstream outFile(fileName);				//output stream
-	OStreamWrapper outWrapper(outFile);		//wrapper
+	ofstream outFile(fileName);
+	OStreamWrapper outWrapper(outFile);
 
 	Writer<OStreamWrapper> writer(outWrapper);
-	configFile.Accept(writer);
+	configFile.Accept(writer);		//schrijft json file van het nieuwe object
 
 	outFile.close();
 }
 
-string ChooseMap()
+string ChooseMap(playerstruct& currentPlayer)
 {
-	string configFile = "";			//tmp value configFile
+	cout << "Instructies voor verschillende mappen: " << endl << endl;
+	cout << "Je kan een map zelf laten generen voor de liefhebber." << endl;
+	cout << "U heeft 2 mappen aangeleverd gekregen(als het goed is)." << endl;
+	cout << "In de \"Config Wumpus\" map staat een .exe bestand. Als je dit runt kan je zelf een kamer structuur creeren" << endl;
+	cout << "Zorg dat het nieuwe bestand (dat eindigt op .json) in dezelfde map staat als het \"Hunt...Adventure.exe\" bestand." << endl;
+	cout << "Als je deze dan wil gebruiken hoef je alleen de naam van het nieuwe bestand in te geven en spelen maar!" << endl << endl << endl;
+	
+	string configFile = "";
 	while (true)
 	{
-		cout << "Instructies voor verschillende mappen: " << endl << endl;
-		cout << "Je kan een map zelf laten generen voor de liefhebber." << endl;
-		cout << "U heeft 2 mappen aangeleverd gekregen(als het goed is)." << endl;
-		cout << "In de \"Config Wumpus\" map staat een .exe bestand. Als je dit runt kan je zelf een kamer structuur creeren" << endl;
-		cout << "Zorg dat het nieuwe bestand (dat eindigt op .json) in dezelfde map staat als het \"Hunt...Adventure.exe\" bestand." << endl;
-		cout << "Als je deze dan wil gebruiken hoef je alleen de naam van het nieuwe bestand in te geven en spelen maar!" << endl << endl << endl;
-		cout << "Welke map wil je inladen? (typ \"config\" voor de test)" << endl << endl;
+		cout << "Welke map wil je inladen? ";
 
-		cin >> configFile;														//vraag naar input om een map te kiezen
-		configFile += ".json";							// er wordt hier al ".json" voor je toegevoegd dus je hoeft alleen een naar op te geven
+		cin >> configFile;								//vraag naar input om een map te kiezen
+		configFile += ".json";							//er wordt hier al ".json" voor je toegevoegd dus je hoeft alleen een naar op te geven
+
 		ifstream checkConf(configFile);
-		if (checkConf.good())
+
+		if (checkConf.good())	//check of file bestaat
 		{
 			break;
 		}
-		else {							//als de filenaam niet bestaat dan geeft hij dit terug
+		else 
+		{
 			cout << "Deze file bestaat niet, probeer het opnieuw\n\n";
 		}
 	}
+
 	system("CLS");						//leeg scherm
 	return configFile;
 }
 
 void PrintLeaderboard(const string& fileName)
 {
-	ifstream file(fileName);			//stream
-	IStreamWrapper wrapper(file);		//wrapper
+	ifstream file(fileName);
+	IStreamWrapper wrapper(file);		//toevoegen wrapper van library rapidjson
 
 	Document configFile;
-	configFile.ParseStream(wrapper);	//parse file
+	configFile.ParseStream(wrapper);
 
 	cout << "Leaderboards van " << fileName << endl;
 	cout << "-------------------------------------------------------------\n";
 	cout << "Speler Naam		Aantal keer gespeeld		Beurten			Map Compleet\n\n";
 	for (unsigned int x = 0; x != configFile["Players"].Size(); x++)
 	{
+		//print stats van elke speler
 		cout << configFile["Players"][x]["Player Name"].GetString() << "\t\t";
 		cout << configFile["Players"][x]["Games Played"].GetInt() << "\t\t\t\t";
 		cout << configFile["Players"][x]["Turns"].GetInt() << "\t\t\t";
@@ -410,18 +415,21 @@ void PrintLeaderboard(const string& fileName)
 		}
 		cout << "\n\n";
 	}
-	system("pause");
 	file.close();
+
+	cout << "Druk op [ENTER] om terug naar het menu te gaan";
+	cin.ignore();
+	cin.get();
 }
 void WumpusRoom(playerstruct& currentPlayer)
 {
-	if (currentPlayer.currentRoom.wumpus) {							//als de kamer waar je in staat gelijk is met de kamer van de wumpus dan ga je naar de gamever functie
+	if (currentPlayer.currentRoom.wumpus) {							//check of wumpus in huidige kamer zit
 		cout << "Je bent tegen de Wumpus aangelopen...hij is boos en heeft je de grond in geslagen\n\n";
-		GameOver(currentPlayer, false);								//zie functie voor functionaliteit
+		GameOver(currentPlayer, false);
 		return;
 	}
 	bool found = false;
-	for (unsigned int x = 0; x != 3; x++) {							//dit is een nested for-loop die checkt in alle kamer door in de adjacentRoom van elke kamer te kijken of de wumpus daarin zit
+	for (unsigned int x = 0; x != 3; x++) {					//checkt in alle kamer door in de adjacentRoom van elke kamer te kijken of de wumpus daarin zit
 		int adjacentRoomIndexX = rooms[currentPlayer.currentRoom.adjacentRooms[x]].roomID;
 		for (unsigned int y = 0; y != 3; y++) {
 			int adjacentRoomIndexY = rooms[adjacentRoomIndexX].adjacentRooms[y];
@@ -430,10 +438,11 @@ void WumpusRoom(playerstruct& currentPlayer)
 				break;
 			}
 		}
-		if (rooms[adjacentRoomIndexX].wumpus) {							//als de wumpus binnen de range van 2 kamer is  krijg je de melding dat je de wumpus ruikt
+		if (rooms[adjacentRoomIndexX].wumpus) {				//als de wumpus binnen de range van 2 kamer is  krijg je de melding dat je de wumpus ruikt
 			found = true;
 		}
-		if (found) { 
+		if (found)
+		{ 
 			PrintLineToConsole("Je ruikt de wumpus...\n");
 			break; 
 		}
@@ -449,32 +458,32 @@ void PlayerShoot(playerstruct& currentPlayer)
 
 	while (numberRooms < 1 || numberRooms > currentPlayer.arrows) {
 		PrintLineToConsole("Hoeveel tunnels wil je doorschieten (1 tot " + to_string(currentPlayer.arrows) + ")?");
-		cin >> numberRooms;
+		cin >> numberRooms;				//vraag hoeveel kamers je wil beschieten
 	}
 
-	for (unsigned int x = numberRooms; x != 0; x--)
+	for (unsigned int x = numberRooms; x != 0; x--)		//for-loop om de kamers die je hebt gekozen door te kijken
 	{
 		PrintLineToConsole("Welke kamer: ");
-		cin >> whichRoom;
+		cin >> whichRoom;		//kiezen van een kamer
 		whichRoom--;
 
-		if (whichRoom < 0 || whichRoom >= rooms.size()) {
+		if (whichRoom < 0 || whichRoom >= rooms.size()) {		//kijken of de kamer niet bestaat
 			cout << "Die kamer bestaat niet\n";
 			x++;
 			continue;
 		}
-		if (rooms[whichRoom].wumpus)
+		if (rooms[whichRoom].wumpus)	//kijken of de wumpus in de kamer zit
 		{
 			PrintLineToConsole("Gefeliciteerd je hebt de Wumpus verslagen!\n\n");
-			GameOver(currentPlayer, true);
+			GameOver(currentPlayer, true);				//zie functie voor functionaliteit
 			return;
 		}
 		PrintLineToConsole("Je hebt gemist en bent nu een pijl kwijt.\n");
 		currentPlayer.arrows -= 1;
-		if (currentPlayer.arrows == 0)
+		if (currentPlayer.arrows == 0)		//kijken of je nog pijlen hebt om mee te schieten
 		{
 			PrintLineToConsole("Je pijlen zijn op, je hebt verloren.\n\n");
-			GameOver(currentPlayer, false);
+			GameOver(currentPlayer, false);				//zie functie voor functionaliteit
 			return;
 		}
 		PrintLineToConsole("Je hebt nog " + to_string(currentPlayer.arrows) + " pijlen over\n\n");
@@ -491,7 +500,7 @@ void RoomSelection(playerstruct& currentPlayer)
 
 		PrintLineToConsole("Naar welke gang? ");
 
-		cin >> whichRoom;						//de vraag naar input waar je één van de hiervoor genoemde kamers moet kiezen
+		cin >> whichRoom;						//de vraag naar input waar je Ã©Ã©n van de hiervoor genoemde kamers moet kiezen
 		whichRoom--;
 
 		PrintLineToConsole("\n");
@@ -614,12 +623,12 @@ void GameOver(playerstruct& currentPlayer, const bool& gameWon)
 		char option = '1';
 		PrintLineToConsole("Wil je weten waar de Wumpus zat? (Y) ");
 		cin >> option;
-		if (option == 'Y') {								//dit is een vraag naar input waarbij "Y" je in dit geval de daadwerkelijke kamer van de wumpus geeft
+		if (option == 'Y') {										//dit is een vraag naar input waarbij "Y" je in dit geval de daadwerkelijke kamer van de wumpus geeft
 			for (unsigned int x = 0; x != rooms.size(); x++)		//met deze for-loop kijkt hij naar alle kamer en checkt hij in welke kamer de wumpus "true"
 			{
 				if (rooms[x].wumpus)
 				{
-					PrintLineToConsole("De Wumpus zat in room " + to_string(rooms[x].roomID) + "!\n");
+					PrintLineToConsole("De Wumpus zat in room " + to_string(rooms[x].roomID + 1) + "!\n");
 				}
 			}
 		}
@@ -633,7 +642,7 @@ void GameOver(playerstruct& currentPlayer, const bool& gameWon)
 bool GameStart(playerstruct& currentPlayer, const string fileName)
 {
 	Intro();							//de intro tekst word gedisplayed
-	while (!currentPlayer.gameOver)	 //als je verliest wordt deze code ge-runt
+	while (!currentPlayer.gameOver)		//als je verliest wordt deze code ge-runt
 	{
 		PlayerInteraction(currentPlayer);		//de keuze om te schieten of lopen
 	}
@@ -661,8 +670,8 @@ bool GameStart(playerstruct& currentPlayer, const string fileName)
 
 bool MenuScreen(string& mapFile, playerstruct& currentPlayer)
 {
-	system("CLS");								//leeg console
-	int choice = 0;								//tmp-variable value
+	system("CLS");		//leeg console
+	int choice = 0;		//tmp-variable value
 
 	cout << "Huidige map: " << mapFile << endl;
 	cout << " _________________________________________________________________________________________________________" << endl;
@@ -676,7 +685,7 @@ bool MenuScreen(string& mapFile, playerstruct& currentPlayer)
 	cout << "|   |_________________| |_________________| |_________________| |_________________| |_________________|   |" << endl;
 	cout << "|_________________________________________________________________________________________________________|" << endl;
 
-	cin >> choice;							//vraag naar input
+	cin >> choice;
 
 	system("CLS");
 
@@ -684,10 +693,10 @@ bool MenuScreen(string& mapFile, playerstruct& currentPlayer)
 	{
 		if (mapFile.empty())				//als er nog geen map is gekozen dan laat het je bij deze kiezen
 		{
-			mapFile = ChooseMap();
+			mapFile = ChooseMap(currentPlayer);
 		}
 		ReadConfigInfo(rooms, mapFile, currentPlayer);
-		currentPlayer.currentRoom = rooms[0];			//standaardwaarde die je in kamer 0 laat spawnen
+		currentPlayer.currentRoom = rooms[0];		//standaardwaarde die je in kamer 0 laat spawnen
 		currentPlayer.gameOver = false;
 
 		while (GameStart(currentPlayer, mapFile)) {}
@@ -697,7 +706,7 @@ bool MenuScreen(string& mapFile, playerstruct& currentPlayer)
 	{
 		if (mapFile.empty())
 		{
-			mapFile = ChooseMap();			//ja krijgt de keuze van welke map je de leaderboards wil zien
+			mapFile = ChooseMap(currentPlayer);			//ja krijgt de keuze van welke map je de leaderboards wil zien
 		}
 		PrintLeaderboard(mapFile);			//hier worden de leaderboards ook daadwerkelijk naar het scherm geprint zie deze functie
 		return true;
@@ -708,7 +717,7 @@ bool MenuScreen(string& mapFile, playerstruct& currentPlayer)
 
 		if (mapFile.empty())				//als er nog geen map is gekozen dan laat het je bij deze kiezen
 		{
-			mapFile = ChooseMap();
+			mapFile = ChooseMap(currentPlayer);
 		}
 		ReadConfigInfo(rooms, mapFile, currentPlayer);
 		currentPlayer.currentRoom = rooms[0];			//standaardwaarde die je in kamer 0 laat spawnen
@@ -725,7 +734,7 @@ bool MenuScreen(string& mapFile, playerstruct& currentPlayer)
 	}
 	else if (choice == 5)
 	{
-		mapFile = ChooseMap();				//als je "5" ingeeft dan moet je de map kiezn waarin je wil spelen
+		mapFile = ChooseMap(currentPlayer);				//als je "5" ingeeft dan moet je de map kiezn waarin je wil spelen
 		return true;
 	}
 
