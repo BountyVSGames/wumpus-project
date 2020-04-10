@@ -1,10 +1,10 @@
 ﻿  Hunt the Wumpus Text Adventure.cpp
 C:\Users\yoeyt\Documents\GitHub\wumpus-project\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure\AI.hpp(2,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-C:\Users\yoeyt\Documents\GitHub\wumpus-project\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure.cpp(34,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\yoeyt\Documents\GitHub\wumpus-project\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure.cpp(36,20): warning C4018: '<': signed/unsigned mismatch
 C:\Users\yoeyt\Documents\GitHub\wumpus-project\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure.cpp(121,22): warning C4018: '<': signed/unsigned mismatch
 C:\Users\yoeyt\Documents\GitHub\wumpus-project\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure.cpp(123,23): warning C4018: '<': signed/unsigned mismatch
 C:\Users\yoeyt\Documents\GitHub\wumpus-project\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure.cpp(156,23): warning C4018: '<': signed/unsigned mismatch
 C:\Users\yoeyt\Documents\GitHub\wumpus-project\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure.cpp(162,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\yoeyt\Documents\GitHub\wumpus-project\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure.cpp(394,34): warning C4018: '>=': signed/unsigned mismatch
-C:\Users\yoeyt\Documents\GitHub\wumpus-project\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure.cpp(592): warning C4715: 'GameStart': not all control paths return a value
+C:\Users\yoeyt\Documents\GitHub\wumpus-project\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure.cpp(420,34): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\yoeyt\Documents\GitHub\wumpus-project\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure\Hunt the Wumpus Text Adventure.cpp(618): warning C4715: 'GameStart': not all control paths return a value
   Hunt the Wumpus Text Adventure.vcxproj -> C:\Users\yoeyt\Documents\GitHub\wumpus-project\Hunt the Wumpus Text Adventure\Debug\Hunt the Wumpus Text Adventure.exe

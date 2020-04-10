@@ -1,6 +1,8 @@
 #include "Room.hpp"
 #include "AI.hpp"
 
+bool aiThreadDone = false;
+
 vector<room> rooms = {}; //alleen ReadConfigInfo veranderd rooms, dus globale variable is oke in dit geval
 string currentLine = "";
 
@@ -83,8 +85,6 @@ void AIThread()
 		unique_lock<mutex> lock(mx);
 		currentLineReady.wait(lock);
 
-		//cout << currentLine.find("tunnels wil je doorschieten");
-
 		if (currentLine.find("schieten of lopen") == 7)
 		{
 			if (aiPlayer.roomsVisited.size() == 0 || !(IsIntInVectorRoom(aiPlayer.roomsVisited, player.currentRoom.roomID)))
@@ -124,12 +124,12 @@ void AIThread()
 				{
 					if (aiPlayer.roomsVisited[j].roomID != player.currentRoom.adjacentRooms[i] && j == (aiPlayer.roomsVisited.size() - 1))
 					{
-						notVisitedRoomId = player.currentRoom.adjacentRooms[i];
+						notVisitedRoomId = player.currentRoom.adjacentRooms[i] + 1;
 						notVisitedRoom = true;
 
 						break;
 					}
-					else if(aiPlayer.roomsVisited[j].roomID == player.currentRoom.adjacentRooms[i])
+					else if(aiPlayer.roomsVisited[j].roomID == player.currentRoom.adjacentRooms[i] + 1)
 					{
 						break;
 					}
@@ -166,6 +166,21 @@ void AIThread()
 
 				AIInputPressUp(0x0D);
 			}
+		}
+		else if (currentLine.find("Je bent tegen de Wumpus aangelopen" == 0))
+		{
+			cout << (currentLine.find("Je bent tegen de Wumpus aangelopen") == 0);
+			break;
+		}
+		else if (currentLine.find("Wil je weten waar de" == 0))
+		{
+			AIInputPressDown(0x10);
+			AIInputPressDown('y');
+			AIInputPressDown(0x0D);
+
+			AIInputPressUp(0x10);
+			AIInputPressUp('y');
+			AIInputPressUp(0x0D);
 		}
 	}
 }
@@ -300,10 +315,17 @@ string ChooseMap(playerstruct& currentPlayer)
 	string configFile = "";
 	while (true)
 	{
-		cout << "Welke map wil je inladen? (typ \"config\" voor de test) ";
+		cout << "Instructies voor verschillende mappen: " << endl << endl;
+		cout << "Je kan een map zelf laten generen voor de liefhebber." << endl;
+		cout << "U heeft 2 mappen aangeleverd gekregen(als het goed is)." << endl;
+		cout << "In de \"Config Wumpus\" map staat een .exe bestand. Als je dit runt kan je zelf een kamer structuur creeren" << endl;
+		cout << "Zorg dat het nieuwe bestand (dat eindigt op .json) in dezelfde map staat als het \"Hunt...Adventure.exe\" bestand." << endl;
+		cout << "Als je deze dan wil gebruiken hoef je alleen de naam van het nieuwe bestand in te geven en spelen maar!" << endl << endl << endl;
+		cout << "Welke map wil je inladen? ";
 
 		cin >> configFile;								//vraag naar input om een map te kiezen
 		configFile += ".json";							//er wordt hier al ".json" voor je toegevoegd dus je hoeft alleen een naar op te geven
+
 		ifstream checkConf(configFile);
 
 		if (checkConf.good())	//check of file bestaat
@@ -315,8 +337,6 @@ string ChooseMap(playerstruct& currentPlayer)
 			cout << "Deze file bestaat niet, probeer het opnieuw\n\n";
 		}
 	}
-	currentPlayer.currentRoom = rooms[0];		//standaardwaarde die je in kamer 0 laat spawnen
-	currentPlayer.gameOver = false;
 
 	system("CLS");						//leeg scherm
 	return configFile;
@@ -425,8 +445,8 @@ void RoomSelection(playerstruct& currentPlayer)
 
 	while (true)
 	{
-		PrintLineToConsole("De gangen lijden naar " + to_string(currentPlayer.currentRoom.adjacentRooms[0])
-			+ " " + to_string(currentPlayer.currentRoom.adjacentRooms[1]) + " " + to_string(currentPlayer.currentRoom.adjacentRooms[2]) + "\n");		//je krijgt hier de aanliggende kamers te zien
+		PrintLineToConsole("De gangen lijden naar " + to_string(currentPlayer.currentRoom.adjacentRooms[0] + 1)
+			+ " " + to_string(currentPlayer.currentRoom.adjacentRooms[1] + 1) + " " + to_string(currentPlayer.currentRoom.adjacentRooms[2] + 1) + "\n");		//je krijgt hier de aanliggende kamers te zien
 
 		PrintLineToConsole("Naar welke gang? ");
 
@@ -553,12 +573,12 @@ void GameOver(playerstruct& currentPlayer, const bool& gameWon)
 		char option = '1';
 		PrintLineToConsole("Wil je weten waar de Wumpus zat? (Y) ");
 		cin >> option;
-		if (option == 'Y') {								//dit is een vraag naar input waarbij "Y" je in dit geval de daadwerkelijke kamer van de wumpus geeft
+		if (option == 'Y') {										//dit is een vraag naar input waarbij "Y" je in dit geval de daadwerkelijke kamer van de wumpus geeft
 			for (unsigned int x = 0; x != rooms.size(); x++)		//met deze for-loop kijkt hij naar alle kamer en checkt hij in welke kamer de wumpus "true"
 			{
 				if (rooms[x].wumpus)
 				{
-					PrintLineToConsole("De Wumpus zat in room " + to_string(rooms[x].roomID) + "!\n");
+					PrintLineToConsole("De Wumpus zat in room " + to_string(rooms[x].roomID + 1) + "!\n");
 				}
 			}
 		}
@@ -572,7 +592,7 @@ void GameOver(playerstruct& currentPlayer, const bool& gameWon)
 bool GameStart(playerstruct& currentPlayer, const string fileName)
 {
 	Intro();							//de intro tekst word gedisplayed
-	while (!currentPlayer.gameOver)	 //als je verliest wordt deze code ge-runt
+	while (!currentPlayer.gameOver)		//als je verliest wordt deze code ge-runt
 	{
 		PlayerInteraction(currentPlayer);		//de keuze om te schieten of lopen
 	}
@@ -618,46 +638,62 @@ bool MenuScreen(string& mapFile, playerstruct& currentPlayer)
 
 	system("CLS");
 
-	switch (choice)
+	if (choice == 1)
 	{
-	case 1:									//als je "1" ingeeft dan start hij de game op met beginnende waardes
 		if (mapFile.empty())				//als er nog geen map is gekozen dan laat het je bij deze kiezen
 		{
-			mapFile = ChooseMap();
+			mapFile = ChooseMap(currentPlayer);
 		}
 		ReadConfigInfo(rooms, mapFile, currentPlayer);
+		currentPlayer.currentRoom = rooms[0];		//standaardwaarde die je in kamer 0 laat spawnen
+		currentPlayer.gameOver = false;
 
 		while (GameStart(currentPlayer, mapFile)) {}
 		return true;
-	case 2:									//als je "2" ingeeft krijg jje het leaderboard te zien
+	}
+	else if(choice == 2)
+	{
 		if (mapFile.empty())
 		{
-			mapFile = ChooseMap();			//ja krijgt de keuze van welke map je de leaderboards wil zien
+			mapFile = ChooseMap(currentPlayer);			//ja krijgt de keuze van welke map je de leaderboards wil zien
 		}
 		PrintLeaderboard(mapFile);			//hier worden de leaderboards ook daadwerkelijk naar het scherm geprint zie deze functie
 		return true;
-	case 3:									//als je "3" ingeeft dan gaat hij een AI-speler in de map zetten die de game zelf kan uitspelen
-		cout << "AI\n";
-		return true;
-	case 4:
-		return false;						//als je "4" ingeeft dan sluit je het spel af
-	case 5:
-		mapFile = ChooseMap();				//als je "5" ingeeft dan moet je de map kiezn waarin je wil spelen
+	}
+	else if (choice == 3)
+	{
+		thread aiThread(AIThread);
+
+		if (mapFile.empty())				//als er nog geen map is gekozen dan laat het je bij deze kiezen
+		{
+			mapFile = ChooseMap(currentPlayer);
+		}
+		ReadConfigInfo(rooms, mapFile, currentPlayer);
+		currentPlayer.currentRoom = rooms[0];			//standaardwaarde die je in kamer 0 laat spawnen
+		currentPlayer.gameOver = false;
+
+		while (GameStart(currentPlayer, mapFile)) {}
+
+		aiThread.join();
 		return true;
 	}
+	else if (choice == 4)
+	{
+		return false;
+	}
+	else if (choice == 5)
+	{
+		mapFile = ChooseMap(currentPlayer);				//als je "5" ingeeft dan moet je de map kiezn waarin je wil spelen
+		return true;
+	}
+
 	return true;
 }
 
 int main()
 {
-	//player player;
 	string mapFile;
 	while (MenuScreen(mapFile, player));
-	//thread playerThread(PlayerThread);
-	//thread aiThread(AIThread);
-
-	//playerThread.join();
-	//aiThread.join();
 
 	return 0;
 }
